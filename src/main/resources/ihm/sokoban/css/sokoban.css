@@ -1,0 +1,102 @@
+.root-pane {
+    -fx-background-color: #2b2b2b;
+}
+
+
+.header-bar {
+    -fx-background-color: #3c3f41;
+}
+
+.label-niveau {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.grid-plateau {
+    -fx-background-color: #1e1e1e;
+    -fx-hgap: 1;
+    -fx-vgap: 1;
+}
+
+.case {
+    -fx-border-color: rgba(0, 0, 0, 0.15);
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+
+
+.case-mur {
+    -fx-background-color: #555555;
+}
+
+.case-sol {
+    -fx-background-color: #d4b483;
+}
+
+.case-cible {
+    -fx-background-color: #d4b483;
+    -fx-border-color: #e74c3c;
+    -fx-border-width: 2;
+    -fx-border-style: dashed;
+}
+
+.case-caisse {
+    -fx-background-color: #a0522d;
+}
+
+.case-caisse-cible {
+    -fx-background-color: #27ae60;
+}
+
+.case-joueur {
+    -fx-background-color: #3498db;
+    -fx-background-radius: 50;
+}
+
+.case-joueur-cible {
+    -fx-background-color: #3498db;
+    -fx-background-radius: 50;
+    -fx-border-color: #e74c3c;
+    -fx-border-width: 2;
+    -fx-border-style: dashed;
+}
+
+.case-vide {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+
+.footer-bar {
+    -fx-background-color: #3c3f41;
+}
+
+.label-stat {
+    -fx-text-fill: #cccccc;
+    -fx-font-size: 13px;
+}
+
+.label-message {
+    -fx-text-fill: #f39c12;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.btn-action {
+    -fx-background-color: #4a90d9;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-padding: 6 14;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.btn-action:hover {
+    -fx-background-color: #5ba0e9;
+}
+
+.btn-action:pressed {
+    -fx-background-color: #3a7bc8;
+}

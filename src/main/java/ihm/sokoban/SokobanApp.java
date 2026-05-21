@@ -1,26 +1,39 @@
 package ihm.sokoban;
 
+import ihm.sokoban.controller.SokobanController;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 /**
  * Application JavaFX principale pour le jeu Sokoban.
+ * Charge le FXML, crée la Scene, branche le clavier.
  */
 public class SokobanApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        BorderPane root = new BorderPane();
 
-        Label temp = new Label("Projet IHM 2026");
-        root.setCenter(temp);
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/ihm/sokoban/fxml/sokoban.fxml"));
+        Parent root = loader.load();
 
-        Scene scene = new Scene(root,320,200);
+        SokobanController controller = loader.getController();
 
-        primaryStage.setTitle("Bientot un jeu de Sokoban");
+        Scene scene = new Scene(root, 700, 600);
+        scene.getStylesheets().add(
+                getClass().getResource("/ihm/sokoban/css/sokoban.css").toExternalForm());
+
+        controller.setupClavier(scene);
+
+        primaryStage.setOnCloseRequest(event -> {
+            event.consume();
+            controller.handleQuitter();
+        });
+
+        primaryStage.setTitle("Sokoban");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
