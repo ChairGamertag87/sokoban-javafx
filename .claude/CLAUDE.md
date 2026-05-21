@@ -356,3 +356,69 @@ private void checkEtat() {
 - [ ] `peutAnnuler()` vérifié avant chaque `annuler()`
 - [ ] Message "dernier niveau réussi" différencié
 - [ ] Document de synthèse PDF présent
+
+---
+
+## Plan d'action — Déroulé étape par étape
+
+### Phase 1 — Fondations (structure FXML + contrôleur)
+
+| # | Fonctionnalité | Fichiers concernés | Statut |
+|---|---|---|---|
+| 1 | Créer le FXML principal + SokobanController + CSS | `sokoban.fxml`, `SokobanController.java`, `sokoban.css`, `SokobanApp.java` | FAIT |
+| 2 | Affichage du plateau (GridPane dynamique, cellules colorées par TypeCase) | `SokobanController.java` (`chargerNiveau()`, `creerCellule()`, `getCssClass()`) | A FAIRE |
+| 3 | Déplacement clavier (EventFilter flèches + guard `peutJouer()`) | `SokobanController.java` (`setupClavier()`, `deplacerJoueur()`, `rafraichirPlateau()`) | A FAIRE |
+
+### Phase 2 — Cœur du jeu (Palier A complet)
+
+| # | Fonctionnalité | Fichiers concernés | Statut |
+|---|---|---|---|
+| 4 | Détection victoire — Alert + passage au niveau suivant + message dernier niveau | `SokobanController.java` (`checkEtat()`) | A FAIRE |
+| 5 | Détection défaite — Alert avec choix Annuler / Recommencer | `SokobanController.java` (`checkEtat()`) | A FAIRE |
+| 6 | Bouton + touche Recommencer (`reset()`) | `sokoban.fxml`, `SokobanController.java` (`handleRecommencer()`) | A FAIRE |
+| 7 | Quitter avec confirmation (bouton X + menu) | `SokobanApp.java`, `SokobanController.java` (`handleQuitter()`) | A FAIRE |
+
+### Phase 3 — Palier B (grille dynamique multi-tailles)
+
+| # | Fonctionnalité | Fichiers concernés | Statut |
+|---|---|---|---|
+| 8 | Validation grille dynamique sur les 10 niveaux (5×5 à 10×9) | `SokobanController.java` (`chargerNiveau()` avec RowConstraints/ColumnConstraints) | A FAIRE |
+
+### Phase 4 — Options bonus
+
+| # | Fonctionnalité | Étoiles | Fichiers concernés | Statut |
+|---|---|---|---|---|
+| 9 | Undo — bouton + touche Z + Ctrl+Z | ★★ | `SokobanController.java` (`handleAnnuler()`) | A FAIRE |
+| 10 | Navigation niveaux — boutons Précédent/Suivant + touches N/P | ★★ | `SokobanController.java` (`handleNiveauSuivant()`, `handleNiveauPrecedent()`) | A FAIRE |
+| 11 | MenuBar complète — Jeu / Édition / Aide + raccourcis clavier | ★★ | `sokoban.fxml`, `SokobanController.java` | A FAIRE |
+| 12 | Compteurs & progression — mouvements, poussées, "Caisses : X/Y", nom du niveau | ★★★ | `SokobanController.java` (`rafraichirUI()`) | A FAIRE |
+| 13 | CSS personnalisé — polish visuel, hover, couleurs affinées | ★ | `sokoban.css` | A FAIRE |
+| 14 | Menu "À propos" | ★ | `SokobanController.java` (`handleAPropos()`) | A FAIRE |
+
+### Phase 5 — Finalisation
+
+| # | Tâche | Statut |
+|---|---|---|
+| 15 | Nettoyage : supprimer `System.out.println`, code mort, fichiers inutiles | A FAIRE |
+| 16 | Générer le JAR shaded (`mvn package`) | A FAIRE |
+| 17 | Document de synthèse PDF (1-2 pages) | A FAIRE |
+| 18 | `mvn clean` + ZIP du projet | A FAIRE |
+
+---
+
+## Commits prévus
+
+| Commit | Contenu |
+|---|---|
+| `Initial commit` | Moteur fourni + squelette projet | FAIT |
+| `Ajout squelette IHM` | FXML + controller + CSS (étape 1) | FAIT |
+| `Affichage plateau` | GridPane dynamique (étape 2) |
+| `Déplacement clavier` | EventFilter + rafraîchir (étape 3) |
+| `Victoire + défaite` | Alerts + checkEtat (étapes 4-5) |
+| `Recommencer + quitter` | Reset + confirmation fermeture (étapes 6-7) |
+| `Grille dynamique validée` | 10 niveaux multi-tailles (étape 8) |
+| `Undo` | Annuler coups (étape 9) |
+| `Navigation niveaux` | Précédent/Suivant (étape 10) |
+| `MenuBar + raccourcis` | Menus complets (étape 11) |
+| `Compteurs + polish` | Labels réactifs + CSS final (étapes 12-14) |
+| `Finalisation` | Nettoyage + JAR + PDF (étapes 15-18) |
