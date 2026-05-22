@@ -1,6 +1,6 @@
 package ihm.sokoban;
 
-import ihm.sokoban.controller.SokobanController;
+import ihm.sokoban.controller.MenuController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 
 /**
  * Application JavaFX principale pour le jeu Sokoban.
- * Charge le FXML, crée la Scene, branche le clavier.
+ * Affiche le menu principal au demarrage.
  */
 public class SokobanApp extends Application {
 
@@ -17,23 +17,17 @@ public class SokobanApp extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/ihm/sokoban/fxml/sokoban.fxml"));
+                getClass().getResource("/ihm/sokoban/fxml/menu.fxml"));
         Parent root = loader.load();
 
-        SokobanController controller = loader.getController();
+        MenuController controller = loader.getController();
+        controller.setStage(primaryStage);
 
         Scene scene = new Scene(root, 700, 600);
         scene.getStylesheets().add(
                 getClass().getResource("/ihm/sokoban/css/sokoban.css").toExternalForm());
 
-        controller.setupClavier(scene);
-
-        primaryStage.setOnCloseRequest(event -> {
-            event.consume();
-            controller.handleQuitter();
-        });
-
-        primaryStage.setTitle("Sokoban");
+        primaryStage.setTitle("Sokoban JavaFX");
         primaryStage.setScene(scene);
         primaryStage.show();
     }

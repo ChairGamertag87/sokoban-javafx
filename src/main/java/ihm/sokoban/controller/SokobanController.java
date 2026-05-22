@@ -39,12 +39,18 @@ public class SokobanController {
 
     private JeuSokoban jeu;
 
+    /**
+     * Injecte le jeu depuis le MenuController.
+     * Doit etre appele AVANT que la scene soit affichee.
+     */
+    public void setJeu(JeuSokoban jeu) {
+        this.jeu = jeu;
+        chargerNiveau();
+    }
+
     @FXML
     private void initialize() {
-        jeu = new JeuSokoban(0);
-
-        // Affiche le premier niveau
-        chargerNiveau();
+        // Le jeu est injecte par setJeu() depuis le menu
     }
 
     public void setupClavier(javafx.scene.Scene scene) {
@@ -178,7 +184,7 @@ public class SokobanController {
 
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Partie bloquee");
-            alert.setHeaderText("Une caisse est coincée dans un coin !");
+            alert.setHeaderText("Une caisse est coincée dans un coin ! #SkillIssue");
 
             ButtonType btnAnnuler = new ButtonType("Annuler le coup");
             ButtonType btnRecommencer = new ButtonType("Recommencer");
