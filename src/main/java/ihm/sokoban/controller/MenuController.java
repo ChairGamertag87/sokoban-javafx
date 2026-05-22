@@ -22,6 +22,7 @@ public class MenuController {
 
     @FXML
     private void handleTutoriel() {
+        SoundManager.playClick();
         JeuSokoban jeu = new JeuSokoban(
                 NiveauxTutoriel.getNiveaux(), NiveauxTutoriel.getNoms(), 0);
         lancerJeu(jeu);
@@ -29,12 +30,14 @@ public class MenuController {
 
     @FXML
     private void handleNormal() {
+        SoundManager.playClick();
         JeuSokoban jeu = new JeuSokoban(0);
         lancerJeu(jeu);
     }
 
     @FXML
     private void handleQuitter() {
+        SoundManager.playClick();
         Stage s = stage;
         if (s != null) {
             s.close();

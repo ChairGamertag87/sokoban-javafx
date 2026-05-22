@@ -163,6 +163,7 @@ public class SokobanController {
 
     private void checkEtat() {
         if (jeu.isNiveauTermine()) {
+            SoundManager.playLevelUp();
             if (jeu.estDernierNiveau()) {
                 showAlert(Alert.AlertType.INFORMATION,
                         "Bravo !",
@@ -203,6 +204,7 @@ public class SokobanController {
 
     @FXML
     private void handleAnnuler() {
+        SoundManager.playClick();
         if (jeu.peutAnnuler()) {
             jeu.annuler();
             rafraichirPlateau();
@@ -212,12 +214,14 @@ public class SokobanController {
 
     @FXML
     private void handleRecommencer() {
+        SoundManager.playClick();
         jeu.reset();
         chargerNiveau();
     }
 
     @FXML
     private void handleNiveauSuivant() {
+        SoundManager.playClick();
         if (jeu.niveauSuivant()) {
             chargerNiveau();
         }
@@ -225,6 +229,7 @@ public class SokobanController {
 
     @FXML
     private void handleNiveauPrecedent() {
+        SoundManager.playClick();
         if (jeu.niveauPrecedent()) {
             chargerNiveau();
         }
