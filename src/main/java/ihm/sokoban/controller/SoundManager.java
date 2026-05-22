@@ -2,9 +2,6 @@ package ihm.sokoban.controller;
 
 import javafx.scene.media.AudioClip;
 
-/**
- * Gestionnaire de sons du jeu.
- */
 public class SoundManager {
 
     private static final AudioClip CLICK = new AudioClip(

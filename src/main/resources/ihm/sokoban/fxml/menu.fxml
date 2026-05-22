@@ -12,37 +12,41 @@
       alignment="CENTER" spacing="0"
       styleClass="menu-root">
 
-    <!-- Espace au-dessus du titre -->
-    <Region prefHeight="40"/>
+    <!-- Espace flexible au-dessus -->
+    <Region VBox.vgrow="ALWAYS"/>
 
     <!-- Logo titre -->
-    <ImageView fitWidth="400" preserveRatio="true" pickOnBounds="true">
+    <ImageView fitWidth="500" preserveRatio="true" pickOnBounds="true">
         <Image url="@../images/title.png"/>
     </ImageView>
 
     <!-- Espace entre titre et boutons -->
-    <Region prefHeight="50"/>
+    <Region prefHeight="60"/>
 
     <!-- Boutons du menu -->
-    <VBox alignment="CENTER" spacing="12">
+    <VBox alignment="CENTER" spacing="16">
         <padding><Insets left="100" right="100"/></padding>
 
         <Button text="Niveaux Tutoriel (5 niveaux)"
                 onAction="#handleTutoriel"
-                styleClass="btn-menu" maxWidth="400" prefWidth="400" prefHeight="50"/>
+                styleClass="btn-menu" maxWidth="500" prefWidth="500" prefHeight="60"/>
 
         <Button text="Niveaux Normaux (10 niveaux)"
                 onAction="#handleNormal"
-                styleClass="btn-menu" maxWidth="400" prefWidth="400" prefHeight="50"/>
+                styleClass="btn-menu" maxWidth="500" prefWidth="500" prefHeight="60"/>
+
+        <Button text="Charger dossier XSB..."
+                onAction="#handleXSB"
+                styleClass="btn-menu" maxWidth="500" prefWidth="500" prefHeight="60"/>
 
         <Region prefHeight="10"/>
 
         <Button text="Quitter"
                 onAction="#handleQuitter"
-                styleClass="btn-menu" maxWidth="400" prefWidth="400" prefHeight="50"/>
+                styleClass="btn-menu" maxWidth="500" prefWidth="500" prefHeight="60"/>
     </VBox>
 
-    <!-- Espace en bas -->
+    <!-- Espace flexible en bas (même hauteur qu'en haut = centrage vertical) -->
     <Region VBox.vgrow="ALWAYS"/>
 
 </VBox>

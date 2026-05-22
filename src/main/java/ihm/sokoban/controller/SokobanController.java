@@ -27,7 +27,7 @@ public class SokobanController {
 
 
 
-    private static final double TAILLE_CASE = 50;
+    private static final double TAILLE_CASE = 64;
 
     @FXML private GridPane grid_plateau;
     @FXML private Label label_mouvements;

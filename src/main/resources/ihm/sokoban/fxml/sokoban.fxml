@@ -37,7 +37,7 @@
 
             <!-- Nom du niveau en cours -->
             <HBox alignment="CENTER" styleClass="header-bar">
-                <padding><Insets top="8" bottom="8"/></padding>
+                <padding><Insets top="4" bottom="4"/></padding>
                 <Label fx:id="label_niveau" text="Niveau 1" styleClass="label-niveau"/>
             </HBox>
         </VBox>
@@ -50,8 +50,8 @@
     </center>
 
     <bottom>
-        <VBox spacing="8" styleClass="footer-bar">
-            <padding><Insets top="8" bottom="12" left="16" right="16"/></padding>
+        <VBox spacing="4" styleClass="footer-bar">
+            <padding><Insets top="6" bottom="6" left="16" right="16"/></padding>
 
             <HBox spacing="20" alignment="CENTER">
                 <Label fx:id="label_mouvements" text="Mouvements : 0" styleClass="label-stat"/>
