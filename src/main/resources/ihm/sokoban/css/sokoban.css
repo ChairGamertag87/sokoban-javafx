@@ -15,15 +15,13 @@
 
 .grid-plateau {
     -fx-background-color: #1e1e1e;
-    -fx-hgap: 1;
-    -fx-vgap: 1;
+    -fx-hgap: 0;
+    -fx-vgap: 0;
 }
 
 .case {
-    -fx-border-color: rgba(0, 0, 0, 0.15);
-    -fx-border-width: 1;
-    -fx-border-radius: 3;
-    -fx-background-radius: 3;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
 }
 
 
