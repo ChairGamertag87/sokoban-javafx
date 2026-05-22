@@ -2,27 +2,27 @@
 
 ## Vue d'ensemble
 
-Application JavaFX permettant de jouer au Sokoban. L'IHM est entièrement à développer.
+Application JavaFX permettant de jouer au Sokoban avec un theme visuel Minecraft.
 Le moteur de jeu est **fourni et intouchable** (packages `ihm.sokoban.model` et `ihm.sokoban.util`).
 
-- **Palier visé** : B (10 niveaux variés, grille dynamique) + options
-- **Stack** : Java 21, JavaFX, FXML, Maven (modèle HelloJavaFX)
-- **Deadline** : vendredi 22 mai avant 18h45 (bonus +1 point si respecté)
+- **Palier vise** : B (10 niveaux varies, grille dynamique) + options
+- **Stack** : Java 21, JavaFX, FXML, Maven (modele HelloJavaFX)
+- **Deadline** : vendredi 22 mai avant 18h45 (bonus +1 point si respecte)
 
 ---
 
-## Contraintes absolues (pénalités lourdes si violation)
+## Contraintes absolues (penalites lourdes si violation)
 
-| Contrainte | Pénalité |
+| Contrainte | Penalite |
 |---|---|
-| Ne **jamais** modifier les packages `ihm.sokoban.model` et `ihm.sokoban.util` | −15 pts |
-| FXML **obligatoire** (pas de UI full-code) | −10 pts |
-| Pas de JAR exécutable (`*-shaded.jar`) | −4 pts |
-| Exceptions non gérées / crashes | −4 pts |
-| Code mort ou fichiers inutiles dans le rendu | −4 pts |
-| `System.out.println(jeu)` ou logs de debug laissés | −2 pts |
-| Pas de document de synthèse PDF | −2 pts |
-| Retard de rendu | −2 pts/jour |
+| Ne **jamais** modifier les packages `ihm.sokoban.model` et `ihm.sokoban.util` | -15 pts |
+| FXML **obligatoire** (pas de UI full-code) | -10 pts |
+| Pas de JAR executable (`*-shaded.jar`) | -4 pts |
+| Exceptions non gerees / crashes | -4 pts |
+| Code mort ou fichiers inutiles dans le rendu | -4 pts |
+| `System.out.println(jeu)` ou logs de debug laisses | -2 pts |
+| Pas de document de synthese PDF | -2 pts |
+| Retard de rendu | -2 pts/jour |
 
 ---
 
@@ -33,60 +33,81 @@ src/
   main/
     java/
       ihm/sokoban/
-        app/          → Main.java (Application JavaFX)
-        controller/   → SokobanController.java (+ autres contrôleurs si besoin)
-        model/        → [FOURNI - NE PAS TOUCHER]
-        util/         → [FOURNI - NE PAS TOUCHER]
+        Main.java              -> Point d'entree
+        SokobanApp.java        -> Application JavaFX (menu principal au demarrage)
+        controller/
+          MenuController.java  -> Controleur du menu principal
+          SokobanController.java -> Controleur principal du jeu
+          SoundManager.java    -> Gestionnaire de sons (click, levelup)
+        model/                 -> [FOURNI - NE PAS TOUCHER]
+        util/                  -> [FOURNI - NE PAS TOUCHER]
     resources/
       ihm/sokoban/
-        fxml/         → sokoban.fxml (vue principale)
-        css/          → sokoban.css
-        images/       → sprites optionnels
+        fxml/
+          menu.fxml            -> Ecran d'accueil (choix des niveaux)
+          sokoban.fxml         -> Vue principale du jeu
+        css/
+          sokoban.css          -> Theme Minecraft complet
+        fonts/
+          Minecraftia-Regular.ttf -> Police pixel art Minecraft
+        images/
+          mur.png              -> Texture cobblestone (murs)
+          sol.png              -> Texture briques (sol)
+          case.png             -> Texture planches (caisse)
+          cible.png            -> Texture cible
+          caisse_cible.png     -> Texture emerald block (caisse bien placee)
+          joueur.png           -> Steve (joueur)
+          joueur_cible.png     -> Steve sur cible
+          fond.png             -> Yellow terracotta (fond)
+          title.png            -> Logo titre "Sokoban JavaFX"
+          btn_normal.png       -> Texture bouton Minecraft (normal)
+          btn_hover.png        -> Texture bouton Minecraft (hover)
+        sounds/
+          click.mp3            -> Son de clic bouton
+          levelup.mp3          -> Son de victoire niveau
 ```
 
-> **Règle stricte** : zéro logique métier dans les contrôleurs. Toute logique passe par `JeuSokoban`.
+> **Regle stricte** : zero logique metier dans les controleurs. Toute logique passe par `JeuSokoban`.
 
 ---
 
-## API du moteur — Référence rapide
+## API du moteur — Reference rapide
 
 ### Instanciation
 
 ```java
-// Palier A — 5 niveaux tutoriel 8×8
+// Palier A — 5 niveaux tutoriel 8x8
 JeuSokoban jeu = new JeuSokoban(NiveauxTutoriel.getNiveaux(), NiveauxTutoriel.getNoms(), 0);
 
-// Palier B — 10 niveaux variés
+// Palier B — 10 niveaux varies
 JeuSokoban jeu = new JeuSokoban(0);
 
 // Palier C — dossier .xsb
 Banque b = LoaderNiveauxXSB.chargerDepuisDossier(Path.of("niveaux_xsb_exemple"));
 JeuSokoban jeu = new JeuSokoban(b.niveaux, b.noms, 0);
 
-// Changer de banque à la volée
+// Changer de banque a la volee
 jeu.setBanqueNiveaux(NiveauxSokoban.getNiveaux(), NiveauxSokoban.getNoms());
 ```
 
-### Déplacement — TOUJOURS protéger avec peutJouer()
+### Deplacement — TOUJOURS proteger avec peutJouer()
 
 ```java
-// Pattern obligatoire : guard avant chaque appel à deplacer()
 if (jeu.peutJouer()) {
     ResultatMouvement r = jeu.deplacer(Direction.DROITE);
-    // DEPLACE | POUSSE | BLOQUE
 }
 ```
 
-> `deplacer()` après fin de partie → `SokobanException(MOUVEMENT_APRES_FIN)`. Le moteur est correct, si ça crash c'est l'IHM.
+> `deplacer()` apres fin de partie -> `SokobanException(MOUVEMENT_APRES_FIN)`.
 
-### Lecture d'état
+### Lecture d'etat
 
 ```java
 jeu.getEtatPartie()          // EN_COURS | GAGNEE | PERDU
 jeu.peutJouer()              // raccourci etat == EN_COURS
 jeu.isNiveauTermine()        // raccourci etat == GAGNEE
 jeu.isPerdu()                // raccourci etat == PERDU
-jeu.estDernierNiveau()       // pour message différencié sur le dernier niveau
+jeu.estDernierNiveau()       // pour message differencie
 
 jeu.getNbMouvements()
 jeu.getNbPoussees()
@@ -96,10 +117,6 @@ jeu.getNbCaisses()
 jeu.getNbLignes()
 jeu.getNbColonnes()
 jeu.getCase(ligne, colonne)  // retourne TypeCase
-jeu.getGrille()              // TypeCase[][]
-
-jeu.getJoueurLigne()
-jeu.getJoueurColonne()
 ```
 
 ### Navigation entre niveaux
@@ -108,7 +125,6 @@ jeu.getJoueurColonne()
 jeu.getNiveauCourant()        // index 0-based
 jeu.getNbNiveaux()
 jeu.getNomNiveauCourant()
-
 jeu.niveauSuivant()           // false si dernier
 jeu.niveauPrecedent()         // false si premier
 jeu.chargerNiveauParIndex(n)
@@ -117,12 +133,11 @@ jeu.chargerNiveauParIndex(n)
 ### Undo / Reset
 
 ```java
-// Toujours protéger
 if (jeu.peutAnnuler()) jeu.annuler();
-jeu.reset(); // recommence le niveau courant
+jeu.reset();
 ```
 
-### TypeCase — méthodes utilitaires
+### TypeCase — methodes utilitaires
 
 ```java
 TypeCase tc = jeu.getCase(l, c);
@@ -142,24 +157,11 @@ EtatPartie    : EN_COURS, GAGNEE, PERDU
 ResultatMouvement : DEPLACE, POUSSE, BLOQUE
 ```
 
-### Exceptions attendues
-
-| TypeErreur | Cause |
-|---|---|
-| `MOUVEMENT_APRES_FIN` | `deplacer()` après GAGNEE/PERDU |
-| `RIEN_A_ANNULER` | `annuler()` sans historique |
-| `NIVEAU_INEXISTANT` | index hors limites |
-| `NIVEAU_INVALIDE` | chaîne null/vide ou dossier .xsb invalide |
-| `AUCUN_JOUEUR` | pas de `@` ou `+` dans le niveau |
-| `CAISSES_CIBLES_DIFFERENTES` | nb caisses ≠ nb cibles |
-
 ---
 
-## Gestion du clavier — Piège critique
+## Gestion du clavier — Piege critique
 
-**Ne pas utiliser `scene.setOnKeyPressed()`** → les flèches cessent de fonctionner dès qu'un Button ou la MenuBar prend le focus.
-
-**Pattern correct obligatoire (EventFilter) :**
+**Ne pas utiliser `scene.setOnKeyPressed()`** -> EventFilter obligatoire.
 
 ```java
 scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
@@ -169,8 +171,10 @@ scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
         case DOWN  -> deplacerJoueur(Direction.BAS);
         case LEFT  -> deplacerJoueur(Direction.GAUCHE);
         case RIGHT -> deplacerJoueur(Direction.DROITE);
-        case R     -> jeu.reset();
-        case Z     -> { if (jeu.peutAnnuler()) jeu.annuler(); }
+        case R     -> handleRecommencer();
+        case Z     -> handleAnnuler();
+        case A     -> handleNiveauPrecedent();
+        case E     -> handleNiveauSuivant();
         default    -> traite = false;
     }
     if (traite) event.consume();
@@ -179,246 +183,108 @@ scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
 
 ---
 
-## Fonctionnalités minimales Palier A (obligatoires)
+## Fonctionnalites Palier A (obligatoires)
 
-- [ ] Affichage plateau avec couleurs/symboles distincts par `TypeCase` (caisse bien placée = visuellement différente)
-- [ ] Déplacement joueur aux flèches (EventFilter, voir ci-dessus)
-- [ ] Poussée de caisses fonctionnelle + BLOQUE sans crash
-- [ ] Détection victoire (`GAGNEE`) → message visible
-- [ ] Détection défaite (`PERDU`) → message + proposer Annuler ou Recommencer
-- [ ] Compteur de mouvements affiché
-- [ ] Bouton/touche Recommencer (`reset()`)
-- [ ] Quitter avec confirmation (`Alert`)
-- [ ] Enchaînement des 5 niveaux tutoriel (bouton "Niveau suivant")
-- [ ] Message différencié sur le dernier niveau ("Bravo, dernier niveau réussi !")
-
----
-
-## Fonctionnalités Palier B (grille dynamique)
-
-- [ ] Grille construite dynamiquement via `jeu.getNbLignes()` / `jeu.getNbColonnes()`
-- [ ] Reconstruction complète du `GridPane` à chaque changement de niveau
-- [ ] Support des 10 niveaux `NiveauxSokoban` (de 5×5 à 10×9)
+- [x] Affichage plateau avec textures Minecraft par TypeCase
+- [x] Deplacement joueur aux fleches (EventFilter)
+- [x] Poussee de caisses fonctionnelle + BLOQUE sans crash
+- [x] Detection victoire (GAGNEE) -> message visible + son levelup
+- [x] Detection defaite (PERDU) -> message + choix Annuler/Recommencer
+- [x] Compteur de mouvements affiche
+- [x] Bouton/touche Recommencer (reset())
+- [x] Quitter avec confirmation (Alert)
+- [x] Enchainement des niveaux (bouton "Niveau suivant")
+- [x] Message differencie sur le dernier niveau
 
 ---
 
-## Options prioritaires visées
+## Fonctionnalites Palier B (grille dynamique)
+
+- [x] Grille construite dynamiquement via getNbLignes() / getNbColonnes()
+- [x] Reconstruction complete du GridPane a chaque changement de niveau
+- [x] Support des 10 niveaux NiveauxSokoban (de 5x5 a 10x9)
+
+---
+
+## Options implementees
 
 ### Jeu / Sokoban
-- Compteur de poussées (★)
-- Nom du niveau affiché (★)
-- Undo — bouton + Ctrl+Z (★★)
-- Navigation précédent/suivant (★★)
-- Progression auto après victoire (★★★)
+- [x] Compteur de poussees (*)
+- [x] Nom du niveau affiche (*)
+- [x] Undo — bouton + touche Z (**)
+- [x] Navigation precedent/suivant — boutons + touches A/E (**)
+- [x] Sons — click bouton + levelup victoire (***)
+- [x] Menu principal — choix Tutoriel / Normal / Quitter (***)
 
 ### JavaFX / IHM
-- CSS personnalisé — couleurs et style des cases (★)
-- Menu "À propos" (★)
-- MenuBar structurée : Jeu / Édition / Aide (★★)
-- Raccourcis clavier : R, Z, N, P, Ctrl+Z (★★)
-- Indicateur de progression "Caisses placées : X/Y" (★★★)
-- Compteurs réactifs avec `IntegerProperty` + binding (★★★)
+- [x] Theme Minecraft complet — textures, boutons, police Minecraftia (***)
+- [x] Menu "A propos" (*)
+- [x] MenuBar structuree : Jeu / Edition / Aide (**)
+- [x] Raccourcis clavier : R, Z, A, E (**)
+- [x] Indicateur de progression "Caisses : X/Y" (***)
+- [x] Fenetre maximisee au demarrage (*)
 
 ---
 
-## Structure du contrôleur principal
+## CSS — Theme Minecraft
 
-```java
-public class SokobanController {
-    @FXML private GridPane grid_plateau;
-    @FXML private Label label_mouvements;
-    @FXML private Label label_poussees;
-    @FXML private Label label_niveau;
-    @FXML private Label label_caisses;
-    @FXML private Label label_message;
-
-    private JeuSokoban jeu;
-
-    // Appelé par initialize() ou changement de niveau
-    private void chargerNiveau() { /* reconstruit le GridPane */ }
-
-    // Pattern : guard + deplacer() + rafraîchirUI() + checkEtat()
-    private void deplacerJoueur(Direction dir) { ... }
-
-    private void rafraichirUI() { /* resynchronise toute la vue */ }
-
-    private void checkEtat() { /* GAGNEE → Alert, PERDU → Alert */ }
-}
-```
-
-> `rafraichirUI()` doit être appelé après **chaque** action (déplacement, undo, reset, changement de niveau).
-
----
-
-## Rebuild du GridPane (Palier B)
-
-```java
-private void chargerNiveau() {
-    grid_plateau.getChildren().clear();
-    grid_plateau.getRowConstraints().clear();
-    grid_plateau.getColumnConstraints().clear();
-
-    int nb_lignes = jeu.getNbLignes();
-    int nb_cols = jeu.getNbColonnes();
-
-    for (int i = 0; i < nb_lignes; i++) {
-        RowConstraints rc = new RowConstraints(TAILLE_CASE);
-        grid_plateau.getRowConstraints().add(rc);
-    }
-    for (int j = 0; j < nb_cols; j++) {
-        ColumnConstraints cc = new ColumnConstraints(TAILLE_CASE);
-        grid_plateau.getColumnConstraints().add(cc);
-    }
-
-    for (int l = 0; l < nb_lignes; l++) {
-        for (int c = 0; c < nb_cols; c++) {
-            Region cellule = creerCellule(jeu.getCase(l, c));
-            grid_plateau.add(cellule, c, l);
-        }
-    }
-}
-```
-
----
-
-## CSS — Classes par TypeCase
-
+Les cases utilisent des textures PNG (images Minecraft) :
 ```css
-.case-mur             { -fx-background-color: #444; }
-.case-sol             { -fx-background-color: #d4b483; }
-.case-cible           { -fx-background-color: #d4b483; /* + indicateur */ }
-.case-caisse          { -fx-background-color: #a0522d; }
-.case-caisse-cible    { -fx-background-color: #228b22; }  /* visuellement différent */
-.case-joueur          { -fx-background-color: #4169e1; }
-.case-joueur-cible    { -fx-background-color: #4169e1; }
-.case-vide            { -fx-background-color: transparent; }
+.case-mur         { -fx-background-image: url("../images/mur.png"); }
+.case-sol         { -fx-background-image: url("../images/sol.png"); }
+.case-cible       { -fx-background-image: url("../images/cible.png"); }
+.case-caisse      { -fx-background-image: url("../images/case.png"); }
+.case-caisse-cible { -fx-background-image: url("../images/caisse_cible.png"); }
+.case-joueur      { -fx-background-image: url("../images/joueur.png"); }
+.case-joueur-cible { -fx-background-image: url("../images/joueur_cible.png"); }
+.case-vide        { -fx-background-color: transparent; }
 ```
 
-Mapping `TypeCase` → classe CSS à centraliser dans une méthode utilitaire :
-```java
-private String getCssClass(TypeCase tc) {
-    return switch (tc) {
-        case MUR              -> "case-mur";
-        case SOL              -> "case-sol";
-        case CIBLE            -> "case-cible";
-        case CAISSE           -> "case-caisse";
-        case CAISSE_SUR_CIBLE -> "case-caisse-cible";
-        case JOUEUR           -> "case-joueur";
-        case JOUEUR_SUR_CIBLE -> "case-joueur-cible";
-        case VIDE             -> "case-vide";
-    };
-}
-```
+Boutons avec texture Minecraft (btn_normal.png / btn_hover.png).
+Police Minecraftia chargee au demarrage via Font.loadFont().
+Fond yellow terracotta en mosaique.
 
 ---
 
-## Gestion des fins de partie
+## Flow de l'application
 
-```java
-private void checkEtat() {
-    if (jeu.isNiveauTermine()) {
-        if (jeu.estDernierNiveau()) {
-            showAlert("Bravo !", "Bravo, dernier niveau réussi !");
-        } else {
-            showAlert("Niveau terminé !", "Niveau réussi ! Passer au suivant ?");
-            jeu.niveauSuivant();
-            chargerNiveau();
-        }
-    } else if (jeu.isPerdu()) {
-        showAlertPerdu(); // Annuler ou Recommencer
-    }
-}
-```
+1. `Main.main()` -> `SokobanApp.start()`
+2. Chargement `menu.fxml` -> ecran d'accueil avec titre + boutons
+3. Choix du mode (Tutoriel 5 niveaux / Normal 10 niveaux)
+4. `MenuController.lancerJeu()` -> charge `sokoban.fxml`, injecte le `JeuSokoban` via `setJeu()`
+5. Jeu en cours avec clavier (fleches + raccourcis) et boutons
 
 ---
 
-## Livrables à rendre
+## Livrables a rendre
 
-1. Archive ZIP du projet (`mvn clean` avant de zipper) — sources + FXML + ressources
-2. JAR exécutable `*-shaded.jar` (généré par Maven)
-3. Document de synthèse PDF (1-2 pages) :
-   - Palier visé
-   - Liste des options implémentées (🎮 et 🎨)
-   - Présentation rapide de l'interface
-   - Paragraphe "Éléments remarquables"
+1. Archive ZIP du projet (`mvn clean` avant de zipper)
+2. JAR executable `*-shaded.jar` (genere par Maven)
+3. Document de synthese PDF (1-2 pages)
 
 ---
 
 ## Checklist avant rendu
 
-- [ ] `mvn clean` effectué
-- [ ] Aucun `System.out.println` laissé
+- [ ] `mvn clean` effectue
+- [ ] Aucun `System.out.println` laisse
 - [ ] Aucun fichier inutile / code mort
-- [ ] JAR shaded généré et testé
-- [ ] Toutes les `SokobanException` catchées (pas de crash)
+- [ ] JAR shaded genere et teste
+- [ ] Toutes les `SokobanException` catchees (pas de crash)
 - [ ] EventFilter clavier en place (pas setOnKeyPressed)
-- [ ] `peutJouer()` vérifié avant chaque `deplacer()`
-- [ ] `peutAnnuler()` vérifié avant chaque `annuler()`
-- [ ] Message "dernier niveau réussi" différencié
-- [ ] Document de synthèse PDF présent
+- [ ] `peutJouer()` verifie avant chaque `deplacer()`
+- [ ] `peutAnnuler()` verifie avant chaque `annuler()`
+- [ ] Message "dernier niveau reussi" differencie
+- [ ] Document de synthese PDF present
+- [ ] Packages model/ et util/ NON modifies
 
 ---
 
-## Plan d'action — Déroulé étape par étape
+## Taches restantes
 
-### Phase 1 — Fondations (structure FXML + contrôleur)
-
-| # | Fonctionnalité | Fichiers concernés | Statut |
-|---|---|---|---|
-| 1 | Créer le FXML principal + SokobanController + CSS | `sokoban.fxml`, `SokobanController.java`, `sokoban.css`, `SokobanApp.java` | FAIT |
-| 2 | Affichage du plateau (GridPane dynamique, cellules colorées par TypeCase) | `SokobanController.java` (`chargerNiveau()`, `creerCellule()`, `getCssClass()`) | A FAIRE |
-| 3 | Déplacement clavier (EventFilter flèches + guard `peutJouer()`) | `SokobanController.java` (`setupClavier()`, `deplacerJoueur()`, `rafraichirPlateau()`) | A FAIRE |
-
-### Phase 2 — Cœur du jeu (Palier A complet)
-
-| # | Fonctionnalité | Fichiers concernés | Statut |
-|---|---|---|---|
-| 4 | Détection victoire — Alert + passage au niveau suivant + message dernier niveau | `SokobanController.java` (`checkEtat()`) | A FAIRE |
-| 5 | Détection défaite — Alert avec choix Annuler / Recommencer | `SokobanController.java` (`checkEtat()`) | A FAIRE |
-| 6 | Bouton + touche Recommencer (`reset()`) | `sokoban.fxml`, `SokobanController.java` (`handleRecommencer()`) | A FAIRE |
-| 7 | Quitter avec confirmation (bouton X + menu) | `SokobanApp.java`, `SokobanController.java` (`handleQuitter()`) | A FAIRE |
-
-### Phase 3 — Palier B (grille dynamique multi-tailles)
-
-| # | Fonctionnalité | Fichiers concernés | Statut |
-|---|---|---|---|
-| 8 | Validation grille dynamique sur les 10 niveaux (5×5 à 10×9) | `SokobanController.java` (`chargerNiveau()` avec RowConstraints/ColumnConstraints) | A FAIRE |
-
-### Phase 4 — Options bonus
-
-| # | Fonctionnalité | Étoiles | Fichiers concernés | Statut |
-|---|---|---|---|---|
-| 9 | Undo — bouton + touche Z + Ctrl+Z | ★★ | `SokobanController.java` (`handleAnnuler()`) | A FAIRE |
-| 10 | Navigation niveaux — boutons Précédent/Suivant + touches N/P | ★★ | `SokobanController.java` (`handleNiveauSuivant()`, `handleNiveauPrecedent()`) | A FAIRE |
-| 11 | MenuBar complète — Jeu / Édition / Aide + raccourcis clavier | ★★ | `sokoban.fxml`, `SokobanController.java` | A FAIRE |
-| 12 | Compteurs & progression — mouvements, poussées, "Caisses : X/Y", nom du niveau | ★★★ | `SokobanController.java` (`rafraichirUI()`) | A FAIRE |
-| 13 | CSS personnalisé — polish visuel, hover, couleurs affinées | ★ | `sokoban.css` | A FAIRE |
-| 14 | Menu "À propos" | ★ | `SokobanController.java` (`handleAPropos()`) | A FAIRE |
-
-### Phase 5 — Finalisation
-
-| # | Tâche | Statut |
+| # | Tache | Statut |
 |---|---|---|
-| 15 | Nettoyage : supprimer `System.out.println`, code mort, fichiers inutiles | A FAIRE |
-| 16 | Générer le JAR shaded (`mvn package`) | A FAIRE |
-| 17 | Document de synthèse PDF (1-2 pages) | A FAIRE |
-| 18 | `mvn clean` + ZIP du projet | A FAIRE |
-
----
-
-## Commits prévus
-
-| Commit | Contenu |
-|---|---|
-| `Initial commit` | Moteur fourni + squelette projet | FAIT |
-| `Ajout squelette IHM` | FXML + controller + CSS (étape 1) | FAIT |
-| `Affichage plateau` | GridPane dynamique (étape 2) |
-| `Déplacement clavier` | EventFilter + rafraîchir (étape 3) |
-| `Victoire + défaite` | Alerts + checkEtat (étapes 4-5) |
-| `Recommencer + quitter` | Reset + confirmation fermeture (étapes 6-7) |
-| `Grille dynamique validée` | 10 niveaux multi-tailles (étape 8) |
-| `Undo` | Annuler coups (étape 9) |
-| `Navigation niveaux` | Précédent/Suivant (étape 10) |
-| `MenuBar + raccourcis` | Menus complets (étape 11) |
-| `Compteurs + polish` | Labels réactifs + CSS final (étapes 12-14) |
-| `Finalisation` | Nettoyage + JAR + PDF (étapes 15-18) |
+| 1 | Nettoyage : supprimer code mort, fichiers inutiles | A FAIRE |
+| 2 | Generer le JAR shaded (`mvn package`) | A FAIRE |
+| 3 | Document de synthese PDF (1-2 pages) | A FAIRE |
+| 4 | `mvn clean` + ZIP du projet | A FAIRE |

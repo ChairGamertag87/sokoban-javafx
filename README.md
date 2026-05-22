@@ -1,16 +1,16 @@
 # Sokoban JavaFX
 
-Projet universitaire — Jeu Sokoban développé en JavaFX dans le cadre du cours IHM 2026.
+Projet universitaire — Jeu Sokoban avec theme Minecraft, developpe en JavaFX dans le cadre du cours IHM 2026.
 
 ---
 
 ## Stack technique
 
 - **Java 21**
-- **JavaFX 21.0.2**
-- **FXML** pour la définition des vues
-- **CSS** pour le style de l'interface
-- **Maven** pour la gestion des dépendances et le build
+- **JavaFX 21.0.2** (controls, fxml, media)
+- **FXML** pour la definition des vues
+- **CSS** pour le theme Minecraft
+- **Maven** pour la gestion des dependances et le build
 
 ---
 
@@ -21,50 +21,55 @@ src/
   main/
     java/
       ihm/sokoban/
-        Main.java                        → Point d'entrée
-        SokobanApp.java                  → Application JavaFX (chargement FXML, Scene, clavier)
+        Main.java                        -> Point d'entree
+        SokobanApp.java                  -> Application JavaFX (menu principal)
         controller/
-          SokobanController.java         → Contrôleur principal de l'IHM
-        model/                           → Moteur de jeu (fourni, non modifiable)
-        util/                            → Utilitaires niveaux (fourni, non modifiable)
+          MenuController.java            -> Controleur du menu d'accueil
+          SokobanController.java         -> Controleur principal du jeu
+          SoundManager.java              -> Gestionnaire de sons
+        model/                           -> Moteur de jeu (fourni, non modifiable)
+        util/                            -> Utilitaires niveaux (fourni, non modifiable)
     resources/
       ihm/sokoban/
         fxml/
-          sokoban.fxml                   → Vue principale (BorderPane, GridPane, menus, labels)
+          menu.fxml                      -> Ecran d'accueil (titre + choix niveaux)
+          sokoban.fxml                   -> Vue principale du jeu
         css/
-          sokoban.css                    → Styles par TypeCase + layout
+          sokoban.css                    -> Theme Minecraft complet
+        fonts/
+          Minecraftia-Regular.ttf        -> Police pixel art
+        images/                          -> Textures Minecraft (mur, sol, caisse, joueur, etc.)
+        sounds/                          -> Sons (click, levelup)
 ```
 
 ---
 
-## Ce qui est actuellement en place
+## Fonctionnalites implementees
 
-### Squelette de l'IHM (étape 1/14)
+### Palier A (complet)
+- Affichage plateau avec textures Minecraft distinctes par TypeCase
+- Deplacement joueur aux fleches (EventFilter)
+- Poussee de caisses + gestion blocage sans crash
+- Detection victoire avec son + message differencie (dernier niveau)
+- Detection defaite avec choix Annuler / Recommencer
+- Compteur de mouvements, poussees, caisses placees
+- Bouton et touche Recommencer
+- Quitter avec confirmation
 
-- **`sokoban.fxml`** — Vue complète avec :
-  - `MenuBar` structurée (Jeu / Édition / Aide)
-  - `GridPane` central prêt à recevoir le plateau dynamique
-  - Barre de stats en bas (mouvements, poussées, caisses placées)
-  - Boutons d'action (Annuler, Recommencer, Précédent, Suivant)
-  - Label message contextuel (victoire, défaite, etc.)
+### Palier B (complet)
+- Grille construite dynamiquement (getNbLignes / getNbColonnes)
+- Reconstruction du GridPane a chaque changement de niveau
+- Support des 10 niveaux NiveauxSokoban (5x5 a 10x9)
 
-- **`SokobanController.java`** — Contrôleur principal avec :
-  - `initialize()` → instancie `JeuSokoban(0)` (10 niveaux Palier B)
-  - `chargerNiveau()` → reconstruction dynamique du GridPane
-  - `setupClavier()` → EventFilter sur la Scene (flèches, R, Z)
-  - `rafraichirUI()` / `rafraichirPlateau()` → synchronisation de la vue
-  - `checkEtat()` → détection victoire/défaite avec Alerts
-  - Tous les handlers FXML (recommencer, annuler, navigation, quitter, à propos)
-
-- **`sokoban.css`** — Styles définis pour chaque `TypeCase` :
-  - Mur, Sol, Cible, Caisse, **Caisse sur cible (vert)**, Joueur, Vide
-  - Style global sombre + barre de stats + boutons avec hover
-
-- **`SokobanApp.java`** — Charge le FXML, crée la Scene, attache le CSS, branche le clavier et gère la fermeture propre via `setOnCloseRequest`
-
-### Ce qui reste à implémenter
-
-Voir le plan d'action complet dans `.claude/CLAUDE.md`.
+### Options bonus
+- **Menu principal** — ecran d'accueil style Minecraft avec choix Tutoriel / Normal / Quitter
+- **Theme Minecraft** — textures PNG, boutons avec texture, police Minecraftia, fond terracotta
+- **Sons** — click sur boutons, levelup a la victoire
+- **Undo** — bouton + touche Z
+- **Navigation niveaux** — boutons + touches A/E
+- **MenuBar** — Jeu / Edition / Aide avec raccourcis
+- **Compteurs** — mouvements, poussees, caisses X/Y, nom du niveau
+- **Fenetre maximisee** au demarrage
 
 ---
 
@@ -73,10 +78,10 @@ Voir le plan d'action complet dans `.claude/CLAUDE.md`.
 Depuis IntelliJ IDEA avec le JDK 21 :
 
 ```
-Run → Main
+Run -> Main
 ```
 
-Ou via Maven (nécessite JDK 21 dans `JAVA_HOME`) :
+Ou via Maven (necessite JDK 21 dans `JAVA_HOME`) :
 
 ```bash
 mvn javafx:run
@@ -84,15 +89,15 @@ mvn javafx:run
 
 ---
 
-## Palier visé
+## Palier vise
 
-**Palier B** — 10 niveaux variés avec grille dynamique + options bonus (undo, navigation, MenuBar, compteurs).
+**Palier B** — 10 niveaux varies avec grille dynamique + options bonus (theme Minecraft, sons, menu principal, undo, navigation, MenuBar, compteurs).
 
 ---
 
-## Outils d'assistance utilisés
+## Outils d'assistance utilises
 
-Ce projet a été développé avec l'assistance de **Claude** (Anthropic) :
+Ce projet a ete developpe avec l'assistance de **Claude** (Anthropic) :
 
-- **Claude Opus 4.6** — Architecture, logique du contrôleur, structure FXML, plan d'action
-- **Claude Sonnet 4.6** — Conseils CSS, style de l'interface, suggestions visuelles
+- **Claude Opus 4.6** — Architecture, logique des controleurs, structure FXML, plan d'action
+- **Claude Sonnet 4.6** — CSS, integration theme Minecraft, suggestions visuelles
