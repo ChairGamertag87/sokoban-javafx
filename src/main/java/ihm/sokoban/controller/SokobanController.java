@@ -100,8 +100,8 @@ public class SokobanController {
     private Region creerCellule(TypeCase typeCase) {
         Region cellule = new Region();
         cellule.setPrefSize(TAILLE_CASE, TAILLE_CASE);
-        cellule.getStyleClass().add("case");            // classe de base commune
-        cellule.getStyleClass().add(getCssClass(typeCase)); // classe spécifique
+        cellule.getStyleClass().add("case");
+        cellule.getStyleClass().add(getCssClass(typeCase));
         return cellule;
     }
 
@@ -133,7 +133,6 @@ public class SokobanController {
 
         for (int l = 0; l < nbLignes; l++) {
             for (int c = 0; c < nbCols; c++) {
-
                 Region cellule = (Region) grid_plateau.getChildren().get(l * nbCols + c);
                 cellule.getStyleClass().clear();
                 cellule.getStyleClass().add("case");

@@ -54,8 +54,8 @@ public class JeuSokoban {
     public JeuSokoban(int indexNiveau) {
         historique = new ArrayDeque<>();
         // Banque par défaut : les 10 niveaux standards.
-        banqueNiveaux = ihm.sokoban.util.NiveauxSokoban.getNiveaux();
-        banqueNoms = ihm.sokoban.util.NiveauxSokoban.getNoms();
+        banqueNiveaux = ihm.sokoban.util.NiveauxTutoriel.getNiveaux();
+        banqueNoms = ihm.sokoban.util.NiveauxTutoriel.getNoms();
         chargerNiveauParIndex(indexNiveau);
     }
 
