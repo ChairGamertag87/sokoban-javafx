@@ -29,17 +29,17 @@
 
         <Button text="Niveaux Tutoriel (5 niveaux)"
                 onAction="#handleTutoriel"
-                styleClass="btn-menu" maxWidth="320" prefHeight="40"/>
+                styleClass="btn-menu" maxWidth="400" prefWidth="400" prefHeight="50"/>
 
         <Button text="Niveaux Normaux (10 niveaux)"
                 onAction="#handleNormal"
-                styleClass="btn-menu" maxWidth="320" prefHeight="40"/>
+                styleClass="btn-menu" maxWidth="400" prefWidth="400" prefHeight="50"/>
 
         <Region prefHeight="10"/>
 
         <Button text="Quitter"
                 onAction="#handleQuitter"
-                styleClass="btn-menu" maxWidth="320" prefHeight="40"/>
+                styleClass="btn-menu" maxWidth="400" prefWidth="400" prefHeight="50"/>
     </VBox>
 
     <!-- Espace en bas -->

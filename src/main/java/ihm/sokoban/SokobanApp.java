@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 /**
@@ -15,6 +16,8 @@ public class SokobanApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
+        Font.loadFont(getClass().getResourceAsStream("/ihm/sokoban/fonts/Minecraftia-Regular.ttf"), 16);
 
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/ihm/sokoban/fxml/menu.fxml"));
@@ -29,6 +32,7 @@ public class SokobanApp extends Application {
 
         primaryStage.setTitle("Sokoban JavaFX");
         primaryStage.setScene(scene);
+        primaryStage.setMaximized(true);
         primaryStage.show();
     }
 
