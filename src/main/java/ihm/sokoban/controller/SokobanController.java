@@ -57,6 +57,8 @@ public class SokobanController {
                 case RIGHT -> deplacerJoueur(Direction.DROITE);
                 case R     -> handleRecommencer();
                 case Z     -> handleAnnuler();
+                case A     -> handleNiveauPrecedent();
+                case E     -> handleNiveauSuivant();
                 default    -> traite = false;
             }
             if (traite) {
@@ -177,7 +179,7 @@ public class SokobanController {
 
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Partie bloquee");
-            alert.setHeaderText("Une caisse est coincee dans un coin !");
+            alert.setHeaderText("Une caisse est coincée dans un coin !");
 
             ButtonType btnAnnuler = new ButtonType("Annuler le coup");
             ButtonType btnRecommencer = new ButtonType("Recommencer");
