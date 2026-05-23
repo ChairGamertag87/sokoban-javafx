@@ -12,7 +12,9 @@ import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -41,6 +43,7 @@ public class SokobanController {
     @FXML private Label label_niveau;
     @FXML private Label label_message;
     @FXML private MenuBar menuBar;
+    @FXML private Menu menuNiveaux;
     @FXML private StackPane overlay_totem;
     @FXML private ImageView img_totem;
 
@@ -65,7 +68,31 @@ public class SokobanController {
 
     public void setJeu(JeuSokoban jeu) {
         this.jeu = jeu;
+        construireMenuNiveaux();
         chargerNiveau();
+    }
+
+    private void construireMenuNiveaux() {
+        menuNiveaux.getItems().clear();
+        int total = jeu.getNbNiveaux();
+        int sauvegarde = jeu.getNiveauCourant();
+        String[] noms = new String[total];
+        for (int i = 0; i < total; i++) {
+            jeu.chargerNiveauParIndex(i);
+            noms[i] = jeu.getNomNiveauCourant();
+        }
+        jeu.chargerNiveauParIndex(sauvegarde);
+
+        for (int i = 0; i < total; i++) {
+            final int index = i;
+            MenuItem item = new MenuItem((i + 1) + " - " + noms[i]);
+            item.setOnAction(e -> {
+                SoundManager.playClick();
+                jeu.chargerNiveauParIndex(index);
+                chargerNiveau();
+            });
+            menuNiveaux.getItems().add(item);
+        }
     }
 
     public void setupClavier(javafx.scene.Scene scene) {

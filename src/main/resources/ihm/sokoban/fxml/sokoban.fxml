@@ -32,6 +32,7 @@
                         <SeparatorMenuItem/>
                         <MenuItem text="Quitter" onAction="#handleQuitter"/>
                     </Menu>
+                    <Menu fx:id="menuNiveaux" text="Niveaux"/>
                     <Menu text="Edition">
                         <MenuItem text="Annuler" onAction="#handleAnnuler"/>
                     </Menu>
