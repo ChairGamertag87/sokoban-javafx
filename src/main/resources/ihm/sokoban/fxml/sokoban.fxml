@@ -4,72 +4,85 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.geometry.Insets?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="ihm.sokoban.controller.SokobanController"
-            styleClass="root-pane">
+<!-- StackPane = calque : le jeu en dessous, l'overlay totem au-dessus -->
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="ihm.sokoban.controller.SokobanController">
 
-    <top>
-        <VBox>
-            <MenuBar fx:id="menuBar">
-                <Menu text="Jeu">
-                    <MenuItem text="Recommencer" onAction="#handleRecommencer"/>
-                    <SeparatorMenuItem/>
-                    <MenuItem text="Niveau precedent" onAction="#handleNiveauPrecedent"/>
-                    <MenuItem text="Niveau suivant" onAction="#handleNiveauSuivant"/>
-                    <SeparatorMenuItem/>
-                    <MenuItem text="Quitter" onAction="#handleQuitter"/>
-                </Menu>
-                <Menu text="Edition">
-                    <MenuItem text="Annuler" onAction="#handleAnnuler"/>
-                </Menu>
-                <Menu text="Aide">
-                    <MenuItem text="A propos" onAction="#handleAPropos"/>
-                </Menu>
-            </MenuBar>
+    <!-- ========== JEU (calque du bas) ========== -->
+    <BorderPane styleClass="root-pane">
 
-            <!-- Nom du niveau en cours -->
-            <HBox alignment="CENTER" styleClass="header-bar">
-                <padding><Insets top="4" bottom="4"/></padding>
-                <Label fx:id="label_niveau" text="Niveau 1" styleClass="label-niveau"/>
-            </HBox>
-        </VBox>
-    </top>
+        <top>
+            <VBox>
+                <MenuBar fx:id="menuBar">
+                    <Menu text="Jeu">
+                        <MenuItem text="Recommencer" onAction="#handleRecommencer"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem text="Niveau precedent" onAction="#handleNiveauPrecedent"/>
+                        <MenuItem text="Niveau suivant" onAction="#handleNiveauSuivant"/>
+                        <SeparatorMenuItem/>
+                        <MenuItem text="Quitter" onAction="#handleQuitter"/>
+                    </Menu>
+                    <Menu text="Edition">
+                        <MenuItem text="Annuler" onAction="#handleAnnuler"/>
+                    </Menu>
+                    <Menu text="Aide">
+                        <MenuItem text="A propos" onAction="#handleAPropos"/>
+                    </Menu>
+                </MenuBar>
 
-    <center>
-        <GridPane fx:id="grid_plateau" alignment="CENTER" styleClass="grid-plateau">
-            <padding><Insets top="10" bottom="10" left="10" right="10"/></padding>
-        </GridPane>
-    </center>
+                <HBox alignment="CENTER" styleClass="header-bar">
+                    <padding><Insets top="4" bottom="4"/></padding>
+                    <Label fx:id="label_niveau" text="Niveau 1" styleClass="label-niveau"/>
+                </HBox>
+            </VBox>
+        </top>
 
-    <bottom>
-        <VBox spacing="4" styleClass="footer-bar">
-            <padding><Insets top="6" bottom="6" left="16" right="16"/></padding>
+        <center>
+            <GridPane fx:id="grid_plateau" alignment="CENTER" styleClass="grid-plateau">
+                <padding><Insets top="10" bottom="10" left="10" right="10"/></padding>
+            </GridPane>
+        </center>
 
-            <HBox spacing="20" alignment="CENTER">
-                <Label fx:id="label_mouvements" text="Mouvements : 0" styleClass="label-stat"/>
-                <Label fx:id="label_poussees" text="Poussees : 0" styleClass="label-stat"/>
-                <Label fx:id="label_caisses" text="Caisses : 0/0" styleClass="label-stat"/>
-            </HBox>
+        <bottom>
+            <VBox spacing="4" styleClass="footer-bar">
+                <padding><Insets top="6" bottom="6" left="16" right="16"/></padding>
 
-            <HBox spacing="10" alignment="CENTER">
-                <Button text="Annuler" onAction="#handleAnnuler" styleClass="btn-action"/>
-                <Button text="Recommencer" onAction="#handleRecommencer" styleClass="btn-action"/>
-                <Button text="Precedent" onAction="#handleNiveauPrecedent" styleClass="btn-action"/>
-                <Button text="Suivant" onAction="#handleNiveauSuivant" styleClass="btn-action"/>
-            </HBox>
-            
-            <HBox alignment="CENTER">
-                <Label fx:id="label_message" text="" styleClass="label-message"/>
-            </HBox>
-        </VBox>
-    </bottom>
+                <HBox spacing="20" alignment="CENTER">
+                    <Label fx:id="label_mouvements" text="Mouvements : 0" styleClass="label-stat"/>
+                    <Label fx:id="label_poussees" text="Poussees : 0" styleClass="label-stat"/>
+                    <Label fx:id="label_caisses" text="Caisses : 0/0" styleClass="label-stat"/>
+                </HBox>
 
-</BorderPane>
+                <HBox spacing="10" alignment="CENTER">
+                    <Button text="Annuler" onAction="#handleAnnuler" styleClass="btn-action"/>
+                    <Button text="Recommencer" onAction="#handleRecommencer" styleClass="btn-action"/>
+                    <Button text="Precedent" onAction="#handleNiveauPrecedent" styleClass="btn-action"/>
+                    <Button text="Suivant" onAction="#handleNiveauSuivant" styleClass="btn-action"/>
+                </HBox>
+
+                <HBox alignment="CENTER">
+                    <Label fx:id="label_message" text="" styleClass="label-message"/>
+                </HBox>
+            </VBox>
+        </bottom>
+
+    </BorderPane>
+
+    <!-- ========== OVERLAY TOTEM (calque du dessus) ========== -->
+    <!-- visible="false" par defaut, affiché uniquement au recommencer -->
+    <StackPane fx:id="overlay_totem" visible="false"
+               style="-fx-background-color: rgba(0,0,0,0.55);">
+        <ImageView fx:id="img_totem" fitWidth="414" fitHeight="332" preserveRatio="true"/>
+    </StackPane>
+
+</StackPane>

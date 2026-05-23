@@ -3,29 +3,31 @@ package ihm.sokoban.controller;
 import ihm.sokoban.model.Direction;
 import ihm.sokoban.model.JeuSokoban;
 import ihm.sokoban.model.TypeCase;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.Optional;
 
 /**
- * Contrôleur principal de l'IHM Sokoban.
- *
- * Règle d'or : ZERO logique métier ici.
- * Tout passe par les méthodes de JeuSokoban.
+ * Controleur principal de l'IHM Sokoban.
+ * Regle d'or : ZERO logique metier ici.
  */
 public class SokobanController {
-
-
 
     private static final double TAILLE_CASE = 64;
 
@@ -36,21 +38,30 @@ public class SokobanController {
     @FXML private Label label_niveau;
     @FXML private Label label_message;
     @FXML private MenuBar menuBar;
+    @FXML private StackPane overlay_totem;
+    @FXML private ImageView img_totem;
+
+    private static final int NB_FRAMES_TOTEM = 38;
+    private static final Image[] TOTEM_FRAMES = new Image[NB_FRAMES_TOTEM];
+
+    static {
+        for (int i = 0; i < NB_FRAMES_TOTEM; i++) {
+            TOTEM_FRAMES[i] = new Image(
+                    SokobanController.class.getResourceAsStream(
+                            String.format("/ihm/sokoban/images/totem/frame_%03d.png", i)));
+        }
+    }
 
     private JeuSokoban jeu;
 
-    /**
-     * Injecte le jeu depuis le MenuController.
-     * Doit etre appele AVANT que la scene soit affichee.
-     */
+    @FXML
+    private void initialize() {
+        // Le jeu est injecte par setJeu() depuis le MenuController
+    }
+
     public void setJeu(JeuSokoban jeu) {
         this.jeu = jeu;
         chargerNiveau();
-    }
-
-    @FXML
-    private void initialize() {
-        // Le jeu est injecte par setJeu() depuis le menu
     }
 
     public void setupClavier(javafx.scene.Scene scene) {
@@ -67,12 +78,9 @@ public class SokobanController {
                 case E     -> handleNiveauSuivant();
                 default    -> traite = false;
             }
-            if (traite) {
-                event.consume();
-            }
+            if (traite) event.consume();
         });
     }
-
 
     private void chargerNiveau() {
         grid_plateau.getChildren().clear();
@@ -80,28 +88,22 @@ public class SokobanController {
         grid_plateau.getColumnConstraints().clear();
 
         int nbLignes = jeu.getNbLignes();
-        int nbCols = jeu.getNbColonnes();
+        int nbCols   = jeu.getNbColonnes();
 
         for (int i = 0; i < nbLignes; i++) {
-            RowConstraints rc = new RowConstraints(TAILLE_CASE);
-            grid_plateau.getRowConstraints().add(rc);
+            grid_plateau.getRowConstraints().add(new RowConstraints(TAILLE_CASE));
         }
-
         for (int j = 0; j < nbCols; j++) {
-            ColumnConstraints cc = new ColumnConstraints(TAILLE_CASE);
-            grid_plateau.getColumnConstraints().add(cc);
+            grid_plateau.getColumnConstraints().add(new ColumnConstraints(TAILLE_CASE));
         }
-
         for (int l = 0; l < nbLignes; l++) {
             for (int c = 0; c < nbCols; c++) {
-                Region cellule = creerCellule(jeu.getCase(l, c));
-                grid_plateau.add(cellule, c, l);
+                grid_plateau.add(creerCellule(jeu.getCase(l, c)), c, l);
             }
         }
 
         rafraichirUI();
     }
-
 
     private Region creerCellule(TypeCase typeCase) {
         Region cellule = new Region();
@@ -135,8 +137,7 @@ public class SokobanController {
 
     private void rafraichirPlateau() {
         int nbLignes = jeu.getNbLignes();
-        int nbCols = jeu.getNbColonnes();
-
+        int nbCols   = jeu.getNbColonnes();
         for (int l = 0; l < nbLignes; l++) {
             for (int c = 0; c < nbCols; c++) {
                 Region cellule = (Region) grid_plateau.getChildren().get(l * nbCols + c);
@@ -147,17 +148,12 @@ public class SokobanController {
         }
     }
 
-
     private void deplacerJoueur(Direction direction) {
-        if (!jeu.peutJouer()) {
-            return;
-        }
-
+        if (!jeu.peutJouer()) return;
         jeu.deplacer(direction);
-
+        SoundManager.playWalk();
         rafraichirPlateau();
         rafraichirUI();
-
         checkEtat();
     }
 
@@ -173,7 +169,6 @@ public class SokobanController {
                 alert.setTitle("Niveau termine !");
                 alert.setHeaderText("Niveau reussi en " + jeu.getNbMouvements() + " mouvements !");
                 alert.setContentText("Passer au niveau suivant ?");
-
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.isPresent() && result.get() == ButtonType.OK) {
                     jeu.niveauSuivant();
@@ -182,22 +177,16 @@ public class SokobanController {
             }
         } else if (jeu.isPerdu()) {
             label_message.setText("Caisse bloquee ! Annulez ou recommencez.");
-
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Partie bloquee");
-            alert.setHeaderText("Une caisse est coincée dans un coin ! #SkillIssue");
-
-            ButtonType btnAnnuler = new ButtonType("Annuler le coup");
+            alert.setHeaderText("Une caisse est coincee dans un coin !");
+            ButtonType btnAnnuler     = new ButtonType("Annuler le coup");
             ButtonType btnRecommencer = new ButtonType("Recommencer");
             alert.getButtonTypes().setAll(btnAnnuler, btnRecommencer);
-
             Optional<ButtonType> result = alert.showAndWait();
             if (result.isPresent()) {
-                if (result.get() == btnAnnuler) {
-                    handleAnnuler();
-                } else {
-                    handleRecommencer();
-                }
+                if (result.get() == btnAnnuler) handleAnnuler();
+                else handleRecommencer();
             }
         }
     }
@@ -215,24 +204,36 @@ public class SokobanController {
     @FXML
     private void handleRecommencer() {
         SoundManager.playClick();
-        jeu.reset();
-        chargerNiveau();
+        SoundManager.playRestart();
+        img_totem.setImage(TOTEM_FRAMES[0]);
+        overlay_totem.setVisible(true);
+
+        Timeline timeline = new Timeline();
+        double fps = 25.0;
+        for (int i = 0; i < NB_FRAMES_TOTEM; i++) {
+            final Image frame = TOTEM_FRAMES[i];
+            timeline.getKeyFrames().add(
+                    new KeyFrame(Duration.seconds(i / fps), e -> img_totem.setImage(frame)));
+        }
+        timeline.getKeyFrames().add(
+                new KeyFrame(Duration.seconds(NB_FRAMES_TOTEM / fps), e -> {
+                    overlay_totem.setVisible(false);
+                    jeu.reset();
+                    chargerNiveau();
+                }));
+        timeline.play();
     }
 
     @FXML
     private void handleNiveauSuivant() {
         SoundManager.playClick();
-        if (jeu.niveauSuivant()) {
-            chargerNiveau();
-        }
+        if (jeu.niveauSuivant()) chargerNiveau();
     }
 
     @FXML
     private void handleNiveauPrecedent() {
         SoundManager.playClick();
-        if (jeu.niveauPrecedent()) {
-            chargerNiveau();
-        }
+        if (jeu.niveauPrecedent()) chargerNiveau();
     }
 
     @FXML
@@ -240,7 +241,6 @@ public class SokobanController {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Quitter");
         alert.setHeaderText("Voulez-vous vraiment quitter ?");
-
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             Stage stage = (Stage) grid_plateau.getScene().getWindow();
@@ -252,9 +252,8 @@ public class SokobanController {
     private void handleAPropos() {
         showAlert(Alert.AlertType.INFORMATION,
                 "A propos",
-                "Sokoban JavaFX\nProjet IHM 2026\nDeveloppé avec JavaFX 21");
+                "Sokoban JavaFX\nProjet IHM 2026\nDeveloppe avec JavaFX 21");
     }
-
 
     private void showAlert(Alert.AlertType type, String titre, String contenu) {
         Alert alert = new Alert(type);
