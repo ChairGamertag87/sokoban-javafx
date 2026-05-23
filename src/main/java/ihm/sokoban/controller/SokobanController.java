@@ -5,7 +5,10 @@ import ihm.sokoban.model.JeuSokoban;
 import ihm.sokoban.model.TypeCase;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -53,6 +56,7 @@ public class SokobanController {
     }
 
     private JeuSokoban jeu;
+    private boolean popupAffiche = false;
 
     @FXML
     private void initialize() {
@@ -76,6 +80,7 @@ public class SokobanController {
                 case Z     -> handleAnnuler();
                 case A     -> handleNiveauPrecedent();
                 case E     -> handleNiveauSuivant();
+                case ENTER, SPACE -> {} // empeche d'activer un bouton par accident
                 default    -> traite = false;
             }
             if (traite) event.consume();
@@ -149,7 +154,7 @@ public class SokobanController {
     }
 
     private void deplacerJoueur(Direction direction) {
-        if (!jeu.peutJouer()) return;
+        if (!jeu.peutJouer() || popupAffiche) return;
         jeu.deplacer(direction);
         SoundManager.playWalk();
         rafraichirPlateau();
@@ -160,6 +165,7 @@ public class SokobanController {
     private void checkEtat() {
         if (jeu.isNiveauTermine()) {
             SoundManager.playLevelUp();
+            popupAffiche = true;
             if (jeu.estDernierNiveau()) {
                 showAlert(Alert.AlertType.INFORMATION,
                         "Bravo !",
@@ -175,8 +181,10 @@ public class SokobanController {
                     chargerNiveau();
                 }
             }
+            popupAffiche = false;
         } else if (jeu.isPerdu()) {
             label_message.setText("Caisse bloquee ! Annulez ou recommencez.");
+            popupAffiche = true;
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Partie bloquee");
             alert.setHeaderText("Une caisse est coincee dans un coin !");
@@ -184,6 +192,7 @@ public class SokobanController {
             ButtonType btnRecommencer = new ButtonType("Recommencer");
             alert.getButtonTypes().setAll(btnAnnuler, btnRecommencer);
             Optional<ButtonType> result = alert.showAndWait();
+            popupAffiche = false;
             if (result.isPresent()) {
                 if (result.get() == btnAnnuler) handleAnnuler();
                 else handleRecommencer();
@@ -255,6 +264,43 @@ public class SokobanController {
                 "Sokoban JavaFX\nProjet IHM 2026\nDeveloppe avec JavaFX 21");
     }
 
+    @FXML
+    public void handleRaccourci() {
+        showAlert(Alert.AlertType.INFORMATION,
+                "Raccourcis clavier",
+                "Deplacement\n"
+                + "  Fleches directionnelles  ->  Deplacer le joueur\n\n"
+                + "Actions\n"
+                + "  R  ->  Recommencer le niveau\n"
+                + "  Z  ->  Annuler le dernier coup\n\n"
+                + "Navigation\n"
+                + "  A  ->  Niveau precedent\n"
+                + "  E  ->  Niveau suivant");
+    }
+
+    @FXML
+    public void handleRetourMenu() {
+        SoundManager.playClick();
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/ihm/sokoban/fxml/menu.fxml"));
+            Parent root = loader.load();
+
+            MenuController menuController = loader.getController();
+            Stage stage = (Stage) grid_plateau.getScene().getWindow();
+            menuController.setStage(stage);
+
+            grid_plateau.getScene().setRoot(root);
+
+            stage.setOnCloseRequest(event -> {
+                event.consume();
+                stage.close();
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void showAlert(Alert.AlertType type, String titre, String contenu) {
         Alert alert = new Alert(type);
         alert.setTitle(titre);
@@ -262,4 +308,6 @@ public class SokobanController {
         alert.setContentText(contenu);
         alert.showAndWait();
     }
+
+
 }

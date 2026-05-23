@@ -37,6 +37,7 @@
                     </Menu>
                     <Menu text="Aide">
                         <MenuItem text="A propos" onAction="#handleAPropos"/>
+                        <MenuItem text="Raccourcis" onAction="#handleRaccourci"/>
                     </Menu>
                 </MenuBar>
 
@@ -68,6 +69,7 @@
                     <Button text="Recommencer" onAction="#handleRecommencer" styleClass="btn-action"/>
                     <Button text="Precedent" onAction="#handleNiveauPrecedent" styleClass="btn-action"/>
                     <Button text="Suivant" onAction="#handleNiveauSuivant" styleClass="btn-action"/>
+                    <Button text="Retour au Menu" onAction="#handleRetourMenu" styleClass="btn-action"/>
                 </HBox>
 
                 <HBox alignment="CENTER">
