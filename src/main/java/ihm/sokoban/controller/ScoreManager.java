@@ -30,6 +30,7 @@ public class ScoreManager {
             try (InputStream in = Files.newInputStream(FICHIER_SCORES)) {
                 scores.load(in);
             } catch (IOException e) {
+                // Fichier corrompu ou illisible : on repart sans scores
             }
         }
     }
@@ -45,6 +46,7 @@ public class ScoreManager {
                 scores.store(out, "Sokoban JavaFX - Meilleurs scores");
             }
         } catch (IOException e) {
+            // Echec silencieux : la sauvegarde des scores n'est pas critique
         }
     }
 

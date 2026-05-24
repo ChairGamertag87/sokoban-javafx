@@ -297,7 +297,7 @@ public class EditeurController {
             menuController.setStage(stage);
             grille.getScene().setRoot(root);
         } catch (IOException e) {
-            e.printStackTrace();
+            showErreur("Erreur", "Impossible de charger le menu.");
         }
     }
 
@@ -341,7 +341,7 @@ public class EditeurController {
                 controller.handleQuitter();
             });
         } catch (IOException e) {
-            e.printStackTrace();
+            showErreur("Erreur", "Impossible de charger le jeu.");
         }
     }
 

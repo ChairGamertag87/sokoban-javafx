@@ -5,7 +5,7 @@ import ihm.sokoban.model.JeuSokoban;
 import ihm.sokoban.model.TypeCase;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -452,7 +452,7 @@ public class SokobanController {
                 stage.close();
             });
         } catch (Exception e) {
-            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger le menu.");
         }
     }
 

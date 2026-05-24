@@ -3,7 +3,7 @@ package ihm.sokoban.controller;
 import ihm.sokoban.model.JeuSokoban;
 import ihm.sokoban.model.SokobanException;
 import ihm.sokoban.util.LoaderNiveauxXSB;
-import ihm.sokoban.util.NiveauxSokoban;
+
 import ihm.sokoban.util.NiveauxTutoriel;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -143,7 +143,7 @@ public class MenuController {
             Parent root = loader.load();
             stage.getScene().setRoot(root);
         } catch (Exception e) {
-            e.printStackTrace();
+            showErreur("Erreur", "Impossible de charger l'editeur.");
         }
     }
 
@@ -183,7 +183,7 @@ public class MenuController {
             });
 
         } catch (Exception e) {
-            e.printStackTrace();
+            showErreur("Erreur", "Impossible de charger le jeu.");
         }
     }
 
