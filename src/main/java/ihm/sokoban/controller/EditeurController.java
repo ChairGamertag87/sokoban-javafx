@@ -21,6 +21,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+/**
+ * Controleur de l'editeur de niveaux.
+ * Permet de creer, modifier, tester et sauvegarder des niveaux Sokoban.
+ */
 public class EditeurController {
 
     private static final double TAILLE_CASE = 64;
@@ -46,8 +50,10 @@ public class EditeurController {
     private Button[] boutonsPalette;
     private char[] caracteresPalette;
 
-    // ==================== INITIALISATION ====================
-
+    /**
+     * Initialise l'editeur : configure les spinners, la palette d'outils
+     * et genere une grille par defaut 7x7.
+     */
     @FXML
     private void initialize() {
 
@@ -64,6 +70,11 @@ public class EditeurController {
         genererGrille(7, 7);
     }
 
+    /**
+     * Gere la selection d'un outil dans la palette lors du clic sur un bouton.
+     *
+     * @param event l'evenement du clic sur le bouton de la palette
+     */
     @FXML
     private void handleSelectOutil(javafx.event.ActionEvent event) {
         SoundManager.playClick();
@@ -71,6 +82,11 @@ public class EditeurController {
         activerBouton(btn);
     }
 
+    /**
+     * Active visuellement un bouton de la palette et met a jour l'outil actif.
+     *
+     * @param btn le bouton a activer (bordure jaune)
+     */
     private void activerBouton(Button btn) {
         if (boutonActif != null) {
             boutonActif.setStyle("");
@@ -86,12 +102,21 @@ public class EditeurController {
         }
     }
 
+    /**
+     * Genere une nouvelle grille vide aux dimensions choisies dans les spinners.
+     */
     @FXML
     private void handleGenerer() {
         SoundManager.playClick();
         genererGrille(spinnerLignes.getValue(), spinnerColonnes.getValue());
     }
 
+    /**
+     * Genere une grille vide avec des murs sur les bords et du sol a l'interieur.
+     *
+     * @param nbLignes le nombre de lignes de la grille
+     * @param nbCols   le nombre de colonnes de la grille
+     */
     private void genererGrille(int nbLignes, int nbCols) {
         plateau = new char[nbLignes][nbCols];
         for (int l = 0; l < nbLignes; l++) {
@@ -106,6 +131,9 @@ public class EditeurController {
         reconstruireGrille();
     }
 
+    /**
+     * Reconstruit entierement le GridPane a partir du tableau plateau.
+     */
     private void reconstruireGrille() {
         grille.getChildren().clear();
         grille.getRowConstraints().clear();
@@ -129,6 +157,14 @@ public class EditeurController {
         }
     }
 
+    /**
+     * Cree une cellule cliquable pour l'editeur.
+     * Clic gauche place l'outil actif, clic droit efface (sol).
+     *
+     * @param ligne la ligne de la cellule dans le plateau
+     * @param col   la colonne de la cellule dans le plateau
+     * @return une Region configuree avec les gestionnaires de clic
+     */
     private Region creerCellule(int ligne, int col) {
         Region cellule = new Region();
         cellule.setPrefSize(TAILLE_CASE, TAILLE_CASE);
@@ -154,6 +190,13 @@ public class EditeurController {
         return cellule;
     }
 
+    /**
+     * Place l'outil actif sur une cellule du plateau.
+     * Si l'outil est le joueur, retire l'ancien joueur avant de placer le nouveau.
+     *
+     * @param ligne la ligne cible
+     * @param col   la colonne cible
+     */
     private void placerOutil(int ligne, int col) {
         if (outilActif == '@') {
             retirerAncienJoueur();
@@ -165,6 +208,10 @@ public class EditeurController {
         }
     }
 
+    /**
+     * Retire l'ancien joueur du plateau (un seul joueur autorise).
+     * Remplace sa case par du sol et rafraichit l'affichage.
+     */
     private void retirerAncienJoueur() {
         for (int l = 0; l < plateau.length; l++) {
             for (int c = 0; c < plateau[0].length; c++) {
@@ -177,12 +224,26 @@ public class EditeurController {
         }
     }
 
+    /**
+     * Met a jour les classes CSS d'une cellule apres modification.
+     *
+     * @param cellule la Region a rafraichir
+     * @param ligne   la ligne de la cellule
+     * @param col     la colonne de la cellule
+     */
     private void rafraichirCellule(Region cellule, int ligne, int col) {
         cellule.getStyleClass().clear();
         cellule.getStyleClass().add("case");
         cellule.getStyleClass().add(getCssClass(plateau[ligne][col]));
     }
 
+    /**
+     * Recupere la Region correspondant a une position dans la grille.
+     *
+     * @param ligne la ligne de la cellule
+     * @param col   la colonne de la cellule
+     * @return la Region a cette position, ou null si hors limites
+     */
     private Region getCellule(int ligne, int col) {
         int index = ligne * plateau[0].length + col;
         if (index < grille.getChildren().size()) {
@@ -191,6 +252,12 @@ public class EditeurController {
         return null;
     }
 
+    /**
+     * Retourne le nom de la classe CSS associee a un caractere du plateau.
+     *
+     * @param c le caractere representant la case ('#', ' ', '.', '$', '@', etc.)
+     * @return le nom de la classe CSS correspondante
+     */
     private String getCssClass(char c) {
         return switch (c) {
             case '#' -> "case-mur";
@@ -205,12 +272,18 @@ public class EditeurController {
     }
 
 
+    /**
+     * Efface la grille et la regenere avec les memes dimensions.
+     */
     @FXML
     private void handleEffacer() {
         SoundManager.playClick();
         genererGrille(plateau.length, plateau[0].length);
     }
 
+    /**
+     * Retourne au menu principal en rechargeant le FXML du menu.
+     */
     @FXML
     private void handleRetour() {
         SoundManager.playClick();
@@ -229,6 +302,10 @@ public class EditeurController {
     }
 
 
+    /**
+     * Valide le niveau puis le lance dans le jeu pour le tester.
+     * Exporte le plateau en XSB et cree un JeuSokoban temporaire.
+     */
     @FXML
     private void handleTester() {
         SoundManager.playClick();
@@ -268,6 +345,9 @@ public class EditeurController {
         }
     }
 
+    /**
+     * Valide le niveau puis ouvre un FileChooser pour le sauvegarder en .xsb.
+     */
     @FXML
     private void handleSauvegarder() {
         SoundManager.playClick();
@@ -298,6 +378,12 @@ public class EditeurController {
         }
     }
 
+    /**
+     * Valide que le niveau respecte les regles Sokoban.
+     * Verifie : exactement 1 joueur, au moins 1 caisse, nombre caisses = nombre cibles.
+     *
+     * @return un message d'erreur si invalide, null si valide
+     */
     private String validerNiveau() {
         int joueurs = 0, caisses = 0, cibles = 0;
 
@@ -325,6 +411,12 @@ public class EditeurController {
     }
 
 
+    /**
+     * Exporte le plateau au format XSB (texte standard Sokoban).
+     * Convertit les caracteres internes ('-' vide) en espaces.
+     *
+     * @return le niveau au format XSB
+     */
     private String exporterXSB() {
         StringBuilder sb = new StringBuilder();
         for (int l = 0; l < plateau.length; l++) {
@@ -338,6 +430,12 @@ public class EditeurController {
         return sb.toString();
     }
 
+    /**
+     * Affiche une popup d'erreur.
+     *
+     * @param titre   le titre de la fenetre
+     * @param message le message d'erreur
+     */
     private void showErreur(String titre, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(titre);
@@ -346,6 +444,12 @@ public class EditeurController {
         alert.showAndWait();
     }
 
+    /**
+     * Affiche une popup d'information.
+     *
+     * @param titre   le titre de la fenetre
+     * @param message le message d'information
+     */
     private void showInfo(String titre, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(titre);

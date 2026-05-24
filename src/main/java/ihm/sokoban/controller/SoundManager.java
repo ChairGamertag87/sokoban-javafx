@@ -4,8 +4,8 @@ import javafx.scene.media.AudioClip;
 import java.util.Random;
 
 /**
- * Gestionnaire de sons du jeu.
- * Les sons de pas sont choisis aléatoirement parmi 6 variantes (style Minecraft).
+ * Gestionnaire de sons de l'application.
+ * Charge les fichiers audio au demarrage et fournit des methodes statiques pour les jouer.
  */
 public class SoundManager {
 
@@ -30,18 +30,22 @@ public class SoundManager {
 
     private static final Random RANDOM = new Random();
 
+    /** Joue le son de clic (bouton). */
     public static void playClick() {
         CLICK.play();
     }
 
+    /** Joue le son de victoire (niveau termine). */
     public static void playLevelUp() {
         LEVEL_UP.play();
     }
 
+    /** Joue un bruit de pas aleatoire parmi 6 sons (volume reduit a 20%). */
     public static void playWalk() {
         WALK[RANDOM.nextInt(WALK.length)].play(0.20);
     }
 
+    /** Joue le son de l'animation totem (recommencer le niveau). */
     public static void playRestart() {
         RESTART[RANDOM.nextInt(RESTART.length)].play();
     }

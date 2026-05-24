@@ -63,17 +63,31 @@ public class SokobanController {
     private boolean animationEnCours = false;
     private final ScoreManager scoreManager = new ScoreManager();
 
+    /**
+     * Initialise le controleur FXML.
+     * Le jeu est injecte apres par setJeu() depuis le MenuController.
+     */
     @FXML
     private void initialize() {
         // Le jeu est injecte par setJeu() depuis le MenuController
     }
 
+    /**
+     * Injecte le modele du jeu et initialise l'affichage.
+     * Construit le menu des niveaux et charge le niveau courant.
+     *
+     * @param jeu l'instance du moteur de jeu Sokoban
+     */
     public void setJeu(JeuSokoban jeu) {
         this.jeu = jeu;
         construireMenuNiveaux();
         chargerNiveau();
     }
 
+    /**
+     * Construit dynamiquement le menu deroulant des niveaux.
+     * Chaque MenuItem charge le niveau correspondant au clic.
+     */
     private void construireMenuNiveaux() {
         menuNiveaux.getItems().clear();
         int total = jeu.getNbNiveaux();
@@ -89,6 +103,12 @@ public class SokobanController {
         }
     }
 
+    /**
+     * Configure les raccourcis clavier sur la scene via un EventFilter.
+     * Bloque les entrees si un popup ou une animation est en cours.
+     *
+     * @param scene la scene JavaFX sur laquelle ecouter les evenements clavier
+     */
     public void setupClavier(javafx.scene.Scene scene) {
         scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (popupAffiche || animationEnCours) {
@@ -112,6 +132,10 @@ public class SokobanController {
         });
     }
 
+    /**
+     * Charge et affiche le niveau courant dans le GridPane.
+     * Reconstruit entierement la grille (contraintes + cellules).
+     */
     private void chargerNiveau() {
         grid_plateau.getChildren().clear();
         grid_plateau.getRowConstraints().clear();
@@ -135,6 +159,13 @@ public class SokobanController {
         rafraichirUI();
     }
 
+    /**
+     * Cree une cellule graphique (Region) pour une case du plateau.
+     * Applique la classe CSS correspondant au type de la case.
+     *
+     * @param typeCase le type de la case a representer
+     * @return une Region configuree avec la bonne classe CSS
+     */
     private Region creerCellule(TypeCase typeCase) {
         Region cellule = new Region();
         cellule.setPrefSize(TAILLE_CASE, TAILLE_CASE);
@@ -143,6 +174,12 @@ public class SokobanController {
         return cellule;
     }
 
+    /**
+     * Retourne le nom de la classe CSS associee a un TypeCase.
+     *
+     * @param tc le type de case du modele
+     * @return le nom de la classe CSS correspondante
+     */
     private String getCssClass(TypeCase tc) {
         return switch (tc) {
             case MUR              -> "case-mur";
@@ -156,6 +193,9 @@ public class SokobanController {
         };
     }
 
+    /**
+     * Met a jour les labels de statistiques (mouvements, poussees, caisses, niveau, record).
+     */
     private void rafraichirUI() {
         label_mouvements.setText("Mouvements : " + jeu.getNbMouvements());
         label_poussees.setText("Poussees : " + jeu.getNbPoussees());
@@ -171,6 +211,10 @@ public class SokobanController {
         label_message.setText("");
     }
 
+    /**
+     * Rafraichit les classes CSS de toutes les cellules du plateau
+     * sans reconstruire la grille (mise a jour rapide apres un deplacement).
+     */
     private void rafraichirPlateau() {
         int nbLignes = jeu.getNbLignes();
         int nbCols   = jeu.getNbColonnes();
@@ -184,6 +228,12 @@ public class SokobanController {
         }
     }
 
+    /**
+     * Deplace le joueur dans la direction donnee si la partie est en cours.
+     * Joue un son de pas, rafraichit l'affichage et verifie l'etat du jeu.
+     *
+     * @param direction la direction du deplacement (HAUT, BAS, GAUCHE, DROITE)
+     */
     private void deplacerJoueur(Direction direction) {
         if (!jeu.peutJouer() || popupAffiche || animationEnCours) return;
         jeu.deplacer(direction);
@@ -193,6 +243,11 @@ public class SokobanController {
         checkEtat();
     }
 
+    /**
+     * Verifie l'etat de la partie apres chaque deplacement.
+     * Gere la victoire (popup + passage au niveau suivant ou message final)
+     * et la defaite (popup avec choix annuler ou recommencer).
+     */
     private void checkEtat() {
         if (jeu.isNiveauTermine() && jeu.getNbCaissesSurCible() == jeu.getNbCaisses()) {
             SoundManager.playLevelUp();
@@ -244,6 +299,10 @@ public class SokobanController {
         }
     }
 
+    /**
+     * Annule le dernier coup joue si possible.
+     * Rafraichit le plateau et les statistiques apres l'annulation.
+     */
     @FXML
     private void handleAnnuler() {
         SoundManager.playClick();
@@ -254,6 +313,10 @@ public class SokobanController {
         }
     }
 
+    /**
+     * Recommence le niveau courant avec une animation totem (38 frames).
+     * Bloque les entrees pendant l'animation puis reinitialise le niveau.
+     */
     @FXML
     private void handleRecommencer() {
         if (animationEnCours) return;
@@ -280,18 +343,28 @@ public class SokobanController {
         timeline.play();
     }
 
+    /**
+     * Passe au niveau suivant si disponible et recharge la grille.
+     */
     @FXML
     private void handleNiveauSuivant() {
         SoundManager.playClick();
         if (jeu.niveauSuivant()) chargerNiveau();
     }
 
+    /**
+     * Revient au niveau precedent si disponible et recharge la grille.
+     */
     @FXML
     private void handleNiveauPrecedent() {
         SoundManager.playClick();
         if (jeu.niveauPrecedent()) chargerNiveau();
     }
 
+    /**
+     * Affiche une popup de confirmation avant de quitter l'application.
+     * Ferme la fenetre si l'utilisateur confirme.
+     */
     @FXML
     public void handleQuitter() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -304,6 +377,10 @@ public class SokobanController {
         }
     }
 
+    /**
+     * Affiche la popup "A propos" avec des emojis Unicode.
+     * Utilise la police Segoe UI Emoji pour le rendu des symboles.
+     */
     @FXML
     private void handleAPropos() {
         String texte =
@@ -335,6 +412,9 @@ public class SokobanController {
         alert.showAndWait();
     }
 
+    /**
+     * Affiche une popup listant tous les raccourcis clavier disponibles.
+     */
     @FXML
     public void handleRaccourci() {
         showAlert(Alert.AlertType.INFORMATION,
@@ -349,6 +429,10 @@ public class SokobanController {
                 + "  E  ->  Niveau suivant");
     }
 
+    /**
+     * Retourne au menu principal en rechargeant le FXML du menu.
+     * Remplace la racine de la scene par la vue du menu.
+     */
     @FXML
     public void handleRetourMenu() {
         SoundManager.playClick();
@@ -372,6 +456,13 @@ public class SokobanController {
         }
     }
 
+    /**
+     * Affiche une popup d'alerte generique.
+     *
+     * @param type    le type d'alerte (INFORMATION, WARNING, etc.)
+     * @param titre   le titre de la fenetre
+     * @param contenu le message affiche dans la popup
+     */
     private void showAlert(Alert.AlertType type, String titre, String contenu) {
         Alert alert = new Alert(type);
         alert.setTitle(titre);

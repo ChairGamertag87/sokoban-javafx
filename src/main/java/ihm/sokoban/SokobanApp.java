@@ -14,6 +14,13 @@ import javafx.stage.Stage;
  */
 public class SokobanApp extends Application {
 
+    /**
+     * Demarre l'application : charge la police, le menu principal,
+     * applique le CSS et affiche la fenetre en plein ecran.
+     *
+     * @param primaryStage la fenetre principale fournie par JavaFX
+     * @throws Exception si le chargement du FXML echoue
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
 
@@ -37,6 +44,11 @@ public class SokobanApp extends Application {
         primaryStage.show();
     }
 
+    /**
+     * Point d'entree alternatif pour lancer l'application JavaFX.
+     *
+     * @param args les arguments de la ligne de commande
+     */
     public static void main2(String[] args) {
         launch(args);
     }

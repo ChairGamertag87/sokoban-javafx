@@ -18,6 +18,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controleur du menu principal.
+ * Permet de choisir le mode de jeu, d'ouvrir l'editeur ou de quitter.
+ */
 public class MenuController {
 
     private static final int TAILLE_MIN = 3;
@@ -25,10 +29,18 @@ public class MenuController {
 
     private Stage stage;
 
+    /**
+     * Injecte la fenetre principale pour les dialogues et la navigation.
+     *
+     * @param stage la fenetre principale de l'application
+     */
     public void setStage(Stage stage) {
         this.stage = stage;
     }
 
+    /**
+     * Lance le mode tutoriel (5 niveaux simples).
+     */
     @FXML
     private void handleTutoriel() {
         SoundManager.playClick();
@@ -37,6 +49,9 @@ public class MenuController {
         lancerJeu(jeu);
     }
 
+    /**
+     * Lance le mode normal (10 niveaux de difficulte croissante).
+     */
     @FXML
     private void handleNormal() {
         SoundManager.playClick();
@@ -44,6 +59,10 @@ public class MenuController {
         lancerJeu(jeu);
     }
 
+    /**
+     * Ouvre un DirectoryChooser pour charger des niveaux depuis un dossier .xsb.
+     * Filtre les niveaux trop petits ou trop grands pour l'affichage.
+     */
     @FXML
     private void handleXSB() {
         SoundManager.playClick();
@@ -112,6 +131,9 @@ public class MenuController {
         lancerJeu(jeu);
     }
 
+    /**
+     * Ouvre l'editeur de niveaux en chargeant son FXML.
+     */
     @FXML
     private void handleEditeur() {
         SoundManager.playClick();
@@ -125,6 +147,9 @@ public class MenuController {
         }
     }
 
+    /**
+     * Ferme l'application.
+     */
     @FXML
     private void handleQuitter() {
         SoundManager.playClick();
@@ -133,6 +158,11 @@ public class MenuController {
         }
     }
 
+    /**
+     * Charge la vue du jeu, injecte le modele et configure le clavier.
+     *
+     * @param jeu l'instance du moteur de jeu a utiliser
+     */
     private void lancerJeu(JeuSokoban jeu) {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -157,6 +187,12 @@ public class MenuController {
         }
     }
 
+    /**
+     * Calcule les dimensions (lignes x colonnes) d'un niveau au format texte.
+     *
+     * @param niveau le niveau en chaine de caracteres (lignes separees par \n)
+     * @return un tableau {nbLignes, nbColonnes}
+     */
     private int[] getDimensions(String niveau) {
         String[] lignes = niveau.split("\n");
         int nbLignes = lignes.length;
@@ -167,6 +203,12 @@ public class MenuController {
         return new int[]{nbLignes, nbCols};
     }
 
+    /**
+     * Affiche une popup d'erreur.
+     *
+     * @param titre   le titre de la fenetre
+     * @param message le message d'erreur
+     */
     private void showErreur(String titre, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(titre);
@@ -175,6 +217,12 @@ public class MenuController {
         alert.showAndWait();
     }
 
+    /**
+     * Affiche une popup d'information.
+     *
+     * @param titre   le titre de la fenetre
+     * @param message le message d'information
+     */
     private void showInfo(String titre, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(titre);
