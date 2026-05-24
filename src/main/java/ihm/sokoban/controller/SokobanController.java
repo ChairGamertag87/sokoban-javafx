@@ -306,9 +306,33 @@ public class SokobanController {
 
     @FXML
     private void handleAPropos() {
-        showAlert(Alert.AlertType.INFORMATION,
-                "A propos",
-                "Sokoban JavaFX\nProjet IHM 2026\nDeveloppe avec JavaFX 21");
+        String texte =
+                "✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n\n"
+                + "🎮  Sokoban JavaFX  🎮\n"
+                + "📚  Projet IHM 2026  📚\n"
+                + "☕  Developpe avec JavaFX 21  ☕\n\n"
+                + "🧱🧱🧱 THEME MINECRAFT 🧱🧱🧱\n\n"
+                + "🏆 Fonctionnalites 🏆\n"
+                + "📦 10 niveaux + editeur integre\n"
+                + "🔊 Sons Minecraft immersifs\n"
+                + "🎵 6 bruits de pas aleatoires\n"
+                + "📈 Sauvegarde des meilleurs scores\n"
+                + "↩ Undo illimite\n"
+                + "📂 Chargement de niveaux .xsb\n"
+                + "🎨 Theme complet avec textures\n\n"
+                + "🔥🔥🔥 MERCI D'AVOIR JOUE 🔥🔥🔥\n\n"
+                + "✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨";
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("A propos");
+        alert.setHeaderText(null);
+
+        Label label = new Label(texte);
+        label.setFont(javafx.scene.text.Font.font("Segoe UI Emoji", 14));
+        label.setWrapText(true);
+
+        alert.getDialogPane().setContent(label);
+        alert.showAndWait();
     }
 
     @FXML
