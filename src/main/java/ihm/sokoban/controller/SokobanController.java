@@ -60,6 +60,7 @@ public class SokobanController {
 
     private JeuSokoban jeu;
     private boolean popupAffiche = false;
+    private final ScoreManager scoreManager = new ScoreManager();
 
     @FXML
     private void initialize() {
@@ -162,8 +163,14 @@ public class SokobanController {
         label_mouvements.setText("Mouvements : " + jeu.getNbMouvements());
         label_poussees.setText("Poussees : " + jeu.getNbPoussees());
         label_caisses.setText("Caisses : " + jeu.getNbCaissesSurCible() + "/" + jeu.getNbCaisses());
-        label_niveau.setText(jeu.getNomNiveauCourant()
-                + "  (" + (jeu.getNiveauCourant() + 1) + "/" + jeu.getNbNiveaux() + ")");
+
+        int record = scoreManager.getMeilleurScore(jeu.getNomNiveauCourant());
+        String txtNiveau = jeu.getNomNiveauCourant()
+                + "  (" + (jeu.getNiveauCourant() + 1) + "/" + jeu.getNbNiveaux() + ")";
+        if (record != -1) {
+            txtNiveau += "  |  Record : " + record;
+        }
+        label_niveau.setText(txtNiveau);
         label_message.setText("");
     }
 
@@ -193,14 +200,21 @@ public class SokobanController {
         if (jeu.isNiveauTermine()) {
             SoundManager.playLevelUp();
             popupAffiche = true;
+
+            int mouvements = jeu.getNbMouvements();
+            String nomNiveau = jeu.getNomNiveauCourant();
+            boolean nouveauRecord = scoreManager.enregistrer(nomNiveau, mouvements);
+            String msgRecord = nouveauRecord ? "\nNouveau record !" : "";
+
             if (jeu.estDernierNiveau()) {
                 showAlert(Alert.AlertType.INFORMATION,
                         "Bravo !",
-                        "Felicitations, vous avez termine le dernier niveau !");
+                        "Felicitations, vous avez termine le dernier niveau !"
+                        + "\n" + mouvements + " mouvements." + msgRecord);
             } else {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Niveau termine !");
-                alert.setHeaderText("Niveau reussi en " + jeu.getNbMouvements() + " mouvements !");
+                alert.setHeaderText("Niveau reussi en " + mouvements + " mouvements !" + msgRecord);
                 alert.setContentText("Passer au niveau suivant ?");
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.isPresent() && result.get() == ButtonType.OK) {
