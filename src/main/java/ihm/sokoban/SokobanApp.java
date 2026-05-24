@@ -31,6 +31,7 @@ public class SokobanApp extends Application {
                 getClass().getResource("/ihm/sokoban/css/sokoban.css").toExternalForm());
 
         primaryStage.setTitle("Sokoban JavaFX");
+        primaryStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/ihm/sokoban/images/logo.png")));
         primaryStage.setScene(scene);
         primaryStage.setMaximized(true);
         primaryStage.show();
