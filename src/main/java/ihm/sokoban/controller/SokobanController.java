@@ -60,6 +60,7 @@ public class SokobanController {
 
     private JeuSokoban jeu;
     private boolean popupAffiche = false;
+    private boolean animationEnCours = false;
     private final ScoreManager scoreManager = new ScoreManager();
 
     @FXML
@@ -76,17 +77,9 @@ public class SokobanController {
     private void construireMenuNiveaux() {
         menuNiveaux.getItems().clear();
         int total = jeu.getNbNiveaux();
-        int sauvegarde = jeu.getNiveauCourant();
-        String[] noms = new String[total];
-        for (int i = 0; i < total; i++) {
-            jeu.chargerNiveauParIndex(i);
-            noms[i] = jeu.getNomNiveauCourant();
-        }
-        jeu.chargerNiveauParIndex(sauvegarde);
-
         for (int i = 0; i < total; i++) {
             final int index = i;
-            MenuItem item = new MenuItem((i + 1) + " - " + noms[i]);
+            MenuItem item = new MenuItem("Niveau " + (i + 1));
             item.setOnAction(e -> {
                 SoundManager.playClick();
                 jeu.chargerNiveauParIndex(index);
@@ -98,6 +91,10 @@ public class SokobanController {
 
     public void setupClavier(javafx.scene.Scene scene) {
         scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (popupAffiche || animationEnCours) {
+                event.consume();
+                return;
+            }
             boolean traite = true;
             switch (event.getCode()) {
                 case UP    -> deplacerJoueur(Direction.HAUT);
@@ -188,7 +185,7 @@ public class SokobanController {
     }
 
     private void deplacerJoueur(Direction direction) {
-        if (!jeu.peutJouer() || popupAffiche) return;
+        if (!jeu.peutJouer() || popupAffiche || animationEnCours) return;
         jeu.deplacer(direction);
         SoundManager.playWalk();
         rafraichirPlateau();
@@ -197,7 +194,7 @@ public class SokobanController {
     }
 
     private void checkEtat() {
-        if (jeu.isNiveauTermine()) {
+        if (jeu.isNiveauTermine() && jeu.getNbCaissesSurCible() == jeu.getNbCaisses()) {
             SoundManager.playLevelUp();
             popupAffiche = true;
 
@@ -235,9 +232,15 @@ public class SokobanController {
             Optional<ButtonType> result = alert.showAndWait();
             popupAffiche = false;
             if (result.isPresent()) {
-                if (result.get() == btnAnnuler) handleAnnuler();
-                else handleRecommencer();
+                if (result.get() == btnAnnuler) {
+                    handleAnnuler();
+                } else {
+                    handleRecommencer();
+                }
             }
+            // Apres annulation/recommencer, on force le rechargement de l'etat
+            rafraichirPlateau();
+            rafraichirUI();
         }
     }
 
@@ -253,8 +256,10 @@ public class SokobanController {
 
     @FXML
     private void handleRecommencer() {
+        if (animationEnCours) return;
         SoundManager.playClick();
         SoundManager.playRestart();
+        animationEnCours = true;
         img_totem.setImage(TOTEM_FRAMES[0]);
         overlay_totem.setVisible(true);
 
@@ -268,6 +273,7 @@ public class SokobanController {
         timeline.getKeyFrames().add(
                 new KeyFrame(Duration.seconds(NB_FRAMES_TOTEM / fps), e -> {
                     overlay_totem.setVisible(false);
+                    animationEnCours = false;
                     jeu.reset();
                     chargerNiveau();
                 }));

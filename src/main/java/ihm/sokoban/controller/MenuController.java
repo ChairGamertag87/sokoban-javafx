@@ -113,6 +113,19 @@ public class MenuController {
     }
 
     @FXML
+    private void handleEditeur() {
+        SoundManager.playClick();
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/ihm/sokoban/fxml/editeur.fxml"));
+            Parent root = loader.load();
+            stage.getScene().setRoot(root);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
     private void handleQuitter() {
         SoundManager.playClick();
         if (stage != null) {
